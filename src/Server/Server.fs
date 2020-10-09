@@ -71,7 +71,7 @@ let app =
         service_config configureServices
         memory_cache
         use_google_oauth_from_config callbackPath jsonMappings
-        use_static "public"
+        use_static "wwwroot"
         use_gzip
         host_config configureHost
     }
