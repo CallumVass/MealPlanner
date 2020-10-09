@@ -14,18 +14,35 @@ open Serilog
 open Giraffe.Core
 open Giraffe.Auth
 open Giraffe.Routing
-open Giraffe.ResponseWriters
 
-let mealApi userId (storage: MealStorage) =
-    { GetMeals = fun () -> async { return! storage.GetMeals userId } }
+let tryGetData f (userId: string option) =
+    async {
+        if userId.IsSome then
+            let! result = f userId.Value
+            return Ok(result)
+        else
+            return Error "Please login"
+    }
+
+let mealApi (userId: string option) (storage: MealStorage) =
+    { GetMeals =
+          fun () ->
+              async {
+                  let! response = tryGetData storage.GetMeals userId
+                  return response
+              } }
 
 let createApi mealApi (context: HttpContext) =
-    let claim =
-        context.User.FindFirst(ClaimTypes.NameIdentifier)
 
     let storage = context.GetService<MealStorage>()
 
-    storage |> mealApi claim.Value
+    if (context.User.Identity.IsAuthenticated) then
+        let claim =
+            context.User.FindFirst(ClaimTypes.NameIdentifier)
+
+        storage |> mealApi (Some claim.Value)
+    else
+        storage |> mealApi None
 
 let webApi =
     Remoting.createApi ()
@@ -36,11 +53,11 @@ let webApi =
 let mustBeLoggedIn =
     requiresAuthentication (challenge "Google")
 
-let authRoutes =
-    choose [ route "/" >=> htmlFile "public/index.html"
-             webApi ]
-
-let webApp = choose [ mustBeLoggedIn >=> authRoutes ]
+let webApp =
+    choose [ webApi
+             mustBeLoggedIn
+             >=> route "/login"
+             >=> redirectTo true "/" ]
 
 let callbackPath = "/signin-google"
 
@@ -71,7 +88,7 @@ let app =
         service_config configureServices
         memory_cache
         use_google_oauth_from_config callbackPath jsonMappings
-        use_static "wwwroot"
+        use_static "public"
         use_gzip
         host_config configureHost
     }

@@ -48,17 +48,7 @@ Target.create "InstallClient" (fun _ -> npm "install" ".")
 
 Target.create "Bundle" (fun _ ->
     dotnet (sprintf "publish -c Release -o \"%s\"" deployDir) serverPath
-    npm "run build" "."
-
-    Shell.mkdir (sprintf "%s\\public" deployDir)
-
-    let publicPath = Path.combine deployDir "public"
-    let targetFile = Path.combine publicPath "index.html"
-
-    let sourcePath = Path.combine deployDir "wwwroot"
-    let sourceFile = Path.combine sourcePath "index.html"
-
-    Shell.mv sourceFile targetFile)
+    npm "run build" ".")
 
 Target.create "Azure" (fun _ ->
     let web =

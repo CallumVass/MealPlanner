@@ -19,4 +19,5 @@ type MealOptions =
 module Route =
     let builder typeName methodName = sprintf "/api/%s/%s" typeName methodName
 
-type IMealApi = { GetMeals: unit -> Async<Meal list> }
+type IMealApi =
+    { GetMeals: unit -> Async<Result<Meal list, string>> }

@@ -12,7 +12,7 @@ let mealApi =
     |> Remoting.buildProxy<IMealApi>
 
 type Msg =
-    | GotMeals of Meal list
+    | MaybeGotMeals of Result<Meal list, string>
     | Calculate
     | AddMeal
     | ChangeDaysBetweenSameMeal of string
@@ -24,16 +24,20 @@ let defaultOptions =
 
 let init () =
     { Options = defaultOptions
-      AvailableMeals = []
-      ChosenMeals = [] },
-    Cmd.OfAsync.perform mealApi.GetMeals () GotMeals
+      UserData = Unauthenticated },
+    Cmd.OfAsync.perform mealApi.GetMeals () MaybeGotMeals
 
 let update msg model =
-    match msg with
-    | GotMeals meals -> { model with AvailableMeals = meals }, Cmd.none
-    | AddMeal -> model, Cmd.none
-    | Calculate -> (calculate model), Cmd.none
-    | ChangeDaysBetweenSameMeal newValue ->
+    match msg, model.UserData with
+    | MaybeGotMeals maybeMeals, _ -> applyMeals model maybeMeals, Cmd.none
+    | AddMeal, Authenticated user -> model, Cmd.none
+    | AddMeal, _ -> model, Cmd.none
+    | Calculate, Authenticated user ->
+        { model with
+              UserData = Authenticated(calculate user model.Options) },
+        Cmd.none
+    | Calculate, _ -> model, Cmd.none
+    | ChangeDaysBetweenSameMeal newValue, _ ->
         let value =
             match String.IsNullOrEmpty newValue with
             | true -> None
@@ -44,7 +48,7 @@ let update msg model =
                   DaysBetweenSameMeal = value |> Option.defaultValue 0 }
 
         { model with Options = newOptions }, Cmd.none
-    | ChangeDaysToCalculate newValue ->
+    | ChangeDaysToCalculate newValue, _ ->
         let value =
             match String.IsNullOrEmpty newValue with
             | true -> None
