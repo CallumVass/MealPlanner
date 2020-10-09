@@ -1,0 +1,34 @@
+source https://api.nuget.org/v3/index.json
+framework: netcoreapp3.1
+storage: none
+
+nuget Dapper
+nuget DbUp
+nuget Fable.Remoting.Giraffe
+nuget Feliz
+nuget Saturn
+nuget Expecto
+
+nuget Fable.Core
+nuget Fable.Elmish
+nuget Fable.Elmish.React
+nuget Fable.Elmish.Debugger
+nuget Fable.Elmish.HMR
+nuget Fable.FontAwesome.Free
+nuget Fable.Mocha
+nuget Fable.React
+nuget Fable.Remoting.Client
+nuget Saturn.Extensions.Authorization
+nuget Serilog.AspNetCore
+
+group Build
+    source https://api.nuget.org/v3/index.json
+    framework: netstandard2.0
+    storage: none
+
+    nuget FSharp.Core
+    nuget Fake.Core.ReleaseNotes
+    nuget Fake.Core.Target
+    nuget Fake.DotNet.Cli
+    nuget Fake.IO.FileSystem
+    nuget Farmer

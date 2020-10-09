@@ -1,0 +1,7 @@
+Saturn
+Fable.Remoting.Giraffe
+Saturn.Extensions.Authorization
+DbUp
+Dapper
+Serilog.AspNetCore
+Serilog.Sinks.Console

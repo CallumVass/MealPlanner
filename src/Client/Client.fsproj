@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="index.html" />
+    <None Include="paket.references" />
+    <Compile Include="Index.Domain.fs" />
+    <Compile Include="Index.fs" />
+    <Compile Include="Index.View.fs" />
+    <Compile Include="App.fs" />
+  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>
