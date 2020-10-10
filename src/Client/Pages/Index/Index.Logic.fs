@@ -1,18 +1,8 @@
-module Index.State
+module Index.Logic
 
 open Shared
 open System
-
-type AuthenticatedUser =
-    { Options: MealOptions
-      AvailableMeals: Meal list
-      ChosenMeals: (string * string * Meal) list }
-
-type UserData =
-    | Unauthenticated
-    | Authenticated of AuthenticatedUser
-
-type State = { UserData: UserData }
+open Index.Types
 
 let rnd = Random()
 

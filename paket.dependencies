@@ -6,6 +6,7 @@ nuget Dapper
 nuget DbUp
 nuget Fable.Remoting.Giraffe
 nuget Feliz
+nuget Feliz.Router
 nuget Saturn
 nuget Expecto
 

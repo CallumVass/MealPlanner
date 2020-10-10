@@ -2,8 +2,7 @@ module Index.View
 
 open Fable.Core.JsInterop
 open Feliz
-open Index.App
-open Index.State
+open Index.Types
 open Shared
 
 let renderMeal (day, date, meal) =
@@ -12,20 +11,6 @@ let renderMeal (day, date, meal) =
 let renderCalculatedMeals dailyMeals =
     Html.div [ prop.className "p-2"
                prop.children (dailyMeals |> List.map renderMeal) ]
-
-let renderHeader userData dispatch =
-
-    let addMealButton =
-        match userData with
-        | Authenticated _ -> ViewHelpers.button false "Add Meal" (ignore)
-        | Unauthenticated -> Html.none
-
-    let h1 =
-        Html.h1 [ prop.className "text-3xl font-semibold text-white"
-                  prop.text "Meal Planner" ]
-
-    Html.div [ prop.className "bg-gradient-to-br from-purple-400 to-purple-700 flex p-4 mb-6 justify-between"
-               prop.children [ h1; addMealButton ] ]
 
 let renderMainBody user dispatch =
 
@@ -89,28 +74,14 @@ let renderMealList meals =
                    (ViewHelpers.box [ ViewHelpers.h2 "Available Meals"
                                       mealList ]) ]
 
-let renderLoginButton =
-    Html.div [ prop.className "w-full"
-               prop.children (ViewHelpers.buttonLink "Login with Google" "/login") ]
-
 let renderBody state dispatch =
 
     let children =
-        match state.UserData with
-        | Authenticated user ->
-            [ renderMainBody user dispatch
-              renderMealList user.AvailableMeals ]
-        | Unauthenticated -> [ renderLoginButton ]
+        [ renderMainBody state dispatch
+          renderMealList state.AvailableMeals ]
 
     Html.div [ prop.className "px-2"
                prop.children [ Html.div [ prop.className "flex flex-wrap"
                                           prop.children children ] ] ]
 
-let view state dispatch =
-
-    let children =
-        [ renderHeader state.UserData dispatch
-          renderBody state dispatch ]
-
-    Html.div [ prop.className "min-h-screen bg-gray-200 text-gray-800"
-               prop.children children ]
+let render state dispatch = renderBody state dispatch
