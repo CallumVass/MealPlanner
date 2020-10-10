@@ -24,20 +24,34 @@ type private MealEntity =
       Name: string }
 
 [<CLIMutable>]
-type private MealAndRuleEntity =
+type private MealRuleEntity =
     { Id: Guid
       Name: string
-      DayOfWeek: string
-      MealId: Guid }
+      DayOfWeek: string }
 
-let private toDomain (meal: MealEntity) (mealRules: MealAndRuleEntity seq) =
+let private toDayOfWeek mealRule =
+    Enum.Parse<DayOfWeek>(mealRule.DayOfWeek)
+
+let private toRule mealRule =
+    let ((id, name), mealRules) = mealRule
+
+    { Id = id
+      Name = name
+      ApplicableOn = mealRules |> Seq.map toDayOfWeek |> List.ofSeq }
+
+let private toRules mealRules =
+    mealRules
+    |> Seq.groupBy (fun r -> r.Id, r.Name)
+    |> Seq.map toRule
+
+let private toDomain (meal: MealEntity) (mealRules: MealRuleEntity seq) =
     { Id = meal.Id
       Name = meal.Name
-      Rules = [] }
+      Rules = (toRules mealRules) |> List.ofSeq }
 
 let private getRules connection (meal: MealEntity) =
     let sql = """
-    SELECT DISTINCT r.Id, r.Name, rd.DayOfWeek, mr.MealId
+    SELECT DISTINCT r.Id, r.Name, rd.DayOfWeek
         FROM Rules r
 	INNER JOIN MealRules mr ON r.Id = mr.RuleId
 	INNER JOIN RuleRuleDays rd ON r.Id = rd.RuleId

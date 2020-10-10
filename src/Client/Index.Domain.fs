@@ -40,12 +40,15 @@ let private getMeal currentMeals dayOfWeek model =
     let meals =
         model.AvailableMeals
         |> List.filter (filterByDayOfWeek dayOfWeek)
-        |> List.filter (filterByHaveHadMealRecently currentMeals model.Options.DaysBetweenSameMeal)
 
     let applicableMeals = mealsWithoutRules @ meals
 
-    applicableMeals
-    |> List.item (rnd.Next applicableMeals.Length)
+    let filteredMeals =
+        applicableMeals
+        |> List.filter (filterByHaveHadMealRecently currentMeals model.Options.DaysBetweenSameMeal)
+
+    filteredMeals
+    |> List.item (rnd.Next filteredMeals.Length)
 
 let private createMeal currentMeals index model =
     let date = DateTime.Now.Date.AddDays(float index)

@@ -14,6 +14,7 @@ open Serilog
 open Giraffe.Core
 open Giraffe.Auth
 open Giraffe.Routing
+open System
 
 
 let mealApi userId (storage: MealStorage) =
@@ -28,10 +29,13 @@ let createApi mealApi (context: HttpContext) =
 
     storage |> mealApi claim.Value
 
+let errorHandler (ex: Exception) (routeInfo: RouteInfo<HttpContext>) = Propagate ex.Message
+
 let webApi =
     Remoting.createApi ()
     |> Remoting.withRouteBuilder Route.builder
     |> Remoting.fromContext (createApi mealApi)
+    |> Remoting.withErrorHandler errorHandler
     |> Remoting.buildHttpHandler
 
 let createAnonymousApi (context: HttpContext) =

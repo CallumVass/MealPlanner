@@ -6,37 +6,19 @@ open Index
 open Index.Domain
 open Shared
 
-let renderMeal (day, date, meal) =
-    Html.div [ Html.p (sprintf "Day: %s Meal: %s" day meal.Name) ]
+let baseClasses =
+    "bg-green-500 text-white font-bold py-2 px-4 rounded"
 
-let renderCalculatedMeals dailyMeals =
-    Html.div [ prop.className "p-2"
-               prop.children (dailyMeals |> List.map renderMeal) ]
+let nonDisabledClasses =
+    "hover:bg-green-700 focus:outline-none focus:shadow-outline"
 
-let renderHeader =
-    let h1 =
-        Html.h1 [ prop.className "text-3xl font-semibold text-white"
-                  prop.text "Meal Planner" ]
-
-    Html.div [ prop.className "bg-gradient-to-br from-purple-400 to-purple-700 flex p-4 mb-6"
-               prop.children h1 ]
-
-let h2 (text: string) =
-    Html.h2 [ prop.className
-                  "bg-gradient-to-br from-purple-400 to-purple-700 flex p-2 mb-2 text-xl font-semibold text-white"
-              prop.text text ]
-
-let box (children: ReactElement seq) =
-    Html.div [ prop.className "bg-white rounded-b pb-3"
-               prop.children children ]
+let buttonLink (text: string) (href: string) =
+    let combinedClasses = baseClasses + " " + nonDisabledClasses
+    Html.a [ prop.href href
+             prop.text text
+             prop.className combinedClasses ]
 
 let button isDisabled (text: string) onClick =
-
-    let baseClasses =
-        "bg-green-500 text-white font-bold py-2 px-4 rounded"
-
-    let nonDisabledClasses =
-        "hover:bg-green-700 focus:outline-none focus:shadow-outline"
 
     let disabledClasses = "opacity-50 cursor-not-allowed"
 
@@ -48,6 +30,36 @@ let button isDisabled (text: string) onClick =
                                              prop.text text
                                              prop.disabled isDisabled
                                              prop.onClick onClick ] ] ]
+
+let renderMeal (day, date, meal) =
+    Html.div [ Html.p (sprintf "Day: %s Meal: %s" day meal.Name) ]
+
+let renderCalculatedMeals dailyMeals =
+    Html.div [ prop.className "p-2"
+               prop.children (dailyMeals |> List.map renderMeal) ]
+
+let renderHeader userData dispatch =
+
+    let addMealButton =
+        match userData with
+        | Authenticated _ -> button false "Add Meal" (ignore)
+        | Unauthenticated -> Html.none
+
+    let h1 =
+        Html.h1 [ prop.className "text-3xl font-semibold text-white"
+                  prop.text "Meal Planner" ]
+
+    Html.div [ prop.className "bg-gradient-to-br from-purple-400 to-purple-700 flex p-4 mb-6 justify-between"
+               prop.children [ h1; addMealButton ] ]
+
+let h2 (text: string) =
+    Html.h2 [ prop.className
+                  "bg-gradient-to-br from-purple-400 to-purple-700 flex p-2 mb-2 text-xl font-semibold text-white"
+              prop.text text ]
+
+let box (children: ReactElement seq) =
+    Html.div [ prop.className "bg-white rounded-b pb-3"
+               prop.children children ]
 
 let renderMainBody user dispatch =
 
@@ -98,26 +110,22 @@ let renderMainBody user dispatch =
                                       createMealPlanButton ])
                                mealPlan ] ]
 
-let renderMealList meals dispatch =
+let renderMealList meals =
 
     let mealList =
-        Html.ul [ prop.className "flex items-center flex-col"
+        Html.ul [ prop.className "flex items-center flex-col text-sm"
                   prop.children [ for meal in meals ->
                                       Html.li [ prop.className "mb-2"
                                                 prop.text meal.Name ] ] ]
 
-    let addMealButton = button false "Add Meal" (ignore)
+
 
     Html.div [ prop.className "w-full sm:w-full md:w-2/5 px-2 mb-2"
-               prop.children
-                   (box [ h2 "Available Meals"
-                          mealList
-                          addMealButton ]) ]
+               prop.children (box [ h2 "Available Meals"; mealList ]) ]
 
 let renderLoginButton =
     Html.div [ prop.className "w-full"
-               prop.children [ Html.a [ prop.href "/login"
-                                        prop.text "Login with Google" ] ] ]
+               prop.children (buttonLink "Login with Google" "/login") ]
 
 let renderBody state dispatch =
 
@@ -125,7 +133,7 @@ let renderBody state dispatch =
         match state.UserData with
         | Authenticated user ->
             [ renderMainBody user dispatch
-              renderMealList user.AvailableMeals dispatch ]
+              renderMealList user.AvailableMeals ]
         | Unauthenticated -> [ renderLoginButton ]
 
     Html.div [ prop.className "px-2"
@@ -135,7 +143,7 @@ let renderBody state dispatch =
 let view state dispatch =
 
     let children =
-        [ renderHeader
+        [ renderHeader state.UserData dispatch
           renderBody state dispatch ]
 
     Html.div [ prop.className "min-h-screen bg-gray-200 text-gray-800"
