@@ -2,34 +2,9 @@ module Index.View
 
 open Fable.Core.JsInterop
 open Feliz
-open Index
-open Index.Domain
+open Index.App
+open Index.State
 open Shared
-
-let baseClasses =
-    "bg-green-500 text-white font-bold py-2 px-4 rounded"
-
-let nonDisabledClasses =
-    "hover:bg-green-700 focus:outline-none focus:shadow-outline"
-
-let buttonLink (text: string) (href: string) =
-    let combinedClasses = baseClasses + " " + nonDisabledClasses
-    Html.a [ prop.href href
-             prop.text text
-             prop.className combinedClasses ]
-
-let button isDisabled (text: string) onClick =
-
-    let disabledClasses = "opacity-50 cursor-not-allowed"
-
-    let combinedClasses =
-        if isDisabled then baseClasses + " " + disabledClasses else baseClasses + " " + nonDisabledClasses
-
-    Html.div [ prop.className "flex px-3"
-               prop.children [ Html.button [ prop.className combinedClasses
-                                             prop.text text
-                                             prop.disabled isDisabled
-                                             prop.onClick onClick ] ] ]
 
 let renderMeal (day, date, meal) =
     Html.div [ Html.p (sprintf "Day: %s Meal: %s" day meal.Name) ]
@@ -42,7 +17,7 @@ let renderHeader userData dispatch =
 
     let addMealButton =
         match userData with
-        | Authenticated _ -> button false "Add Meal" (ignore)
+        | Authenticated _ -> ViewHelpers.button false "Add Meal" (ignore)
         | Unauthenticated -> Html.none
 
     let h1 =
@@ -51,15 +26,6 @@ let renderHeader userData dispatch =
 
     Html.div [ prop.className "bg-gradient-to-br from-purple-400 to-purple-700 flex p-4 mb-6 justify-between"
                prop.children [ h1; addMealButton ] ]
-
-let h2 (text: string) =
-    Html.h2 [ prop.className
-                  "bg-gradient-to-br from-purple-400 to-purple-700 flex p-2 mb-2 text-xl font-semibold text-white"
-              prop.text text ]
-
-let box (children: ReactElement seq) =
-    Html.div [ prop.className "bg-white rounded-b pb-3"
-               prop.children children ]
 
 let renderMainBody user dispatch =
 
@@ -90,24 +56,22 @@ let renderMainBody user dispatch =
                                        user.Options.DaysToCalculate
                                        ChangeDaysToCalculate ] ]
 
-
-
     let mealPlan =
         if user.ChosenMeals.IsEmpty then
             Html.none
         else
             Html.div [ prop.className "mt-2"
                        prop.children
-                           (box [ h2 "Meal Plan"
-                                  renderCalculatedMeals user.ChosenMeals ]) ]
+                           (ViewHelpers.box [ ViewHelpers.h2 "Meal Plan"
+                                              renderCalculatedMeals user.ChosenMeals ]) ]
 
     let createMealPlanButton =
-        button user.AvailableMeals.IsEmpty "Create Meal Plan" (fun _ -> Calculate |> dispatch)
+        ViewHelpers.button user.AvailableMeals.IsEmpty "Create Meal Plan" (fun _ -> Calculate |> dispatch)
 
     Html.div [ prop.className "w-full sm:w-full md:w-3/5 px-2 mb-2"
-               prop.children [ (box [ h2 "Meals"
-                                      form
-                                      createMealPlanButton ])
+               prop.children [ (ViewHelpers.box [ ViewHelpers.h2 "Meals"
+                                                  form
+                                                  createMealPlanButton ])
                                mealPlan ] ]
 
 let renderMealList meals =
@@ -121,11 +85,13 @@ let renderMealList meals =
 
 
     Html.div [ prop.className "w-full sm:w-full md:w-2/5 px-2 mb-2"
-               prop.children (box [ h2 "Available Meals"; mealList ]) ]
+               prop.children
+                   (ViewHelpers.box [ ViewHelpers.h2 "Available Meals"
+                                      mealList ]) ]
 
 let renderLoginButton =
     Html.div [ prop.className "w-full"
-               prop.children (buttonLink "Login with Google" "/login") ]
+               prop.children (ViewHelpers.buttonLink "Login with Google" "/login") ]
 
 let renderBody state dispatch =
 

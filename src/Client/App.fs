@@ -1,5 +1,7 @@
 module App
 
+open Index.App
+
 open Fable.Core.JsInterop
 
 importAll "./style.scss"
@@ -13,7 +15,7 @@ open Elmish.Debug
 open Elmish.HMR
 #endif
 
-Program.mkProgram Index.init Index.update Index.View.view
+Program.mkProgram init update Index.View.view
 #if DEBUG
 |> Program.withConsoleTrace
 #endif

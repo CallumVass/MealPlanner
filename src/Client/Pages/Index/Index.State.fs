@@ -1,4 +1,4 @@
-module Index.Domain
+module Index.State
 
 open Shared
 open System
@@ -12,7 +12,7 @@ type UserData =
     | Unauthenticated
     | Authenticated of AuthenticatedUser
 
-type Domain = { UserData: UserData }
+type State = { UserData: UserData }
 
 let rnd = Random()
 

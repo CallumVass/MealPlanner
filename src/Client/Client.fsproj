@@ -8,9 +8,10 @@
   <ItemGroup>
     <None Include="index.html" />
     <None Include="paket.references" />
-    <Compile Include="Index.Domain.fs" />
-    <Compile Include="Index.fs" />
-    <Compile Include="Index.View.fs" />
+    <Compile Include="ViewHelpers.fs" />
+    <Compile Include="Pages\Index\Index.State.fs" />
+    <Compile Include="Pages\Index\Index.App.fs" />
+    <Compile Include="Pages\Index\Index.View.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

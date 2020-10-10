@@ -15,6 +15,7 @@
     <Compile Include="Server.fs" />
     <EmbeddedResource Include="Scripts/Script0001 - Initial.sql" />
     <EmbeddedResource Include="Scripts/Script0002 - DayOfWeek.sql" />
+    <EmbeddedResource Include="Scripts/Script0003 - AdjustedRuleTable.sql" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

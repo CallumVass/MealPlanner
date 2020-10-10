@@ -1,8 +1,8 @@
-module Index
+module Index.App
 
 open Elmish
 open Fable.Remoting.Client
-open Index.Domain
+open Index.State
 open Shared
 open System
 
