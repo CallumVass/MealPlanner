@@ -8,7 +8,7 @@ open Api
 open Index.Logic
 
 let defaultOptions =
-    { DaysBetweenSameMeal = 4
+    { DaysBetweenSameMeal = 14
       DaysToCalculate = 7 }
 
 let defaultState =

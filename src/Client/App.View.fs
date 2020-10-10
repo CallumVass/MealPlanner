@@ -6,7 +6,6 @@ open Types
 open App.Logic
 
 let renderHeader =
-
     let h1 =
         Html.h1 [ prop.className "text-3xl font-semibold text-white"
                   prop.text "Meal Planner" ]
