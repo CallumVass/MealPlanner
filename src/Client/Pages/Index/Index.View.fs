@@ -13,7 +13,6 @@ let renderCalculatedMeals dailyMeals =
                prop.children (dailyMeals |> List.map renderMeal) ]
 
 let renderMainBody user dispatch =
-
     let formInput (labelText: string) for' (inputValue: int) msg =
         Html.div [ prop.className "w-1/2 px-3"
                    prop.children [ Html.label [ prop.className
@@ -60,14 +59,11 @@ let renderMainBody user dispatch =
                                mealPlan ] ]
 
 let renderMealList meals =
-
     let mealList =
         Html.ul [ prop.className "flex items-center flex-col text-sm"
                   prop.children [ for meal in meals ->
                                       Html.li [ prop.className "mb-2"
                                                 prop.text meal.Name ] ] ]
-
-
 
     Html.div [ prop.className "w-full sm:w-full md:w-2/5 px-2 mb-2"
                prop.children
@@ -75,7 +71,6 @@ let renderMealList meals =
                                       mealList ]) ]
 
 let renderBody state dispatch =
-
     let children =
         [ renderMainBody state dispatch
           renderMealList state.AvailableMeals ]

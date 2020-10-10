@@ -17,7 +17,7 @@ let init () =
           CurrentUrl = initialUrl
           CurrentPage = indexState |> Page.Index }
 
-    let (model, cmd) =
+    let (state, cmd) =
         match initialUrl with
         | Url.Index ->
 
@@ -34,7 +34,7 @@ let init () =
         //     Cmd.map EditMealMsg editMealCmd
         | Url.Unknown -> defaultState, Cmd.none
 
-    model, performAuthCheck (cmd)
+    state, performAuthCheck (cmd)
 
 let update (msg: Msg) (state: State) =
     match msg, state.CurrentPage with

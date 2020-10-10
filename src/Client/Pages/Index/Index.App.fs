@@ -11,19 +11,18 @@ let defaultOptions =
     { DaysBetweenSameMeal = 4
       DaysToCalculate = 7 }
 
-let defaultModel =
+let defaultState =
     { Options = defaultOptions
       AvailableMeals = []
       ChosenMeals = [] }
 
 let init () =
-    defaultModel, Cmd.OfAsync.perform mealApi.GetMeals () GotMeals
+    defaultState, Cmd.OfAsync.perform mealApi.GetMeals () GotMeals
 
-
-let update msg model =
+let update msg state =
     match msg with
-    | GotMeals meals -> { model with AvailableMeals = meals }, Cmd.none
-    | Calculate -> model |> calculate, Cmd.none
+    | GotMeals meals -> { state with AvailableMeals = meals }, Cmd.none
+    | Calculate -> state |> calculate, Cmd.none
     | ChangeDaysBetweenSameMeal newValue ->
         let value =
             match String.IsNullOrEmpty newValue with
@@ -31,10 +30,10 @@ let update msg model =
             | false -> newValue |> int |> Some
 
         let newOptions =
-            { model.Options with
+            { state.Options with
                   DaysBetweenSameMeal = value |> Option.defaultValue 0 }
 
-        { model with Options = newOptions }, Cmd.none
+        { state with Options = newOptions }, Cmd.none
     | ChangeDaysToCalculate newValue ->
         let value =
             match String.IsNullOrEmpty newValue with
@@ -42,7 +41,7 @@ let update msg model =
             | false -> newValue |> int |> Some
 
         let newOptions =
-            { model.Options with
+            { state.Options with
                   DaysToCalculate = value |> Option.defaultValue 0 }
 
-        { model with Options = newOptions }, Cmd.none
+        { state with Options = newOptions }, Cmd.none
