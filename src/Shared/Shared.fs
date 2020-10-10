@@ -19,5 +19,7 @@ type MealOptions =
 module Route =
     let builder typeName methodName = sprintf "/api/%s/%s" typeName methodName
 
-type IMealApi =
-    { GetMeals: unit -> Async<Result<Meal list, string>> }
+type IAnonymousApi =
+    { IsAuthenticated: unit -> Async<bool> }
+
+type IMealApi = { GetMeals: unit -> Async<Meal list> }

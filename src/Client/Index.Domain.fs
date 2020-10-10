@@ -4,16 +4,15 @@ open Shared
 open System
 
 type AuthenticatedUser =
-    { AvailableMeals: Meal list
+    { Options: MealOptions
+      AvailableMeals: Meal list
       ChosenMeals: (string * string * Meal) list }
 
 type UserData =
     | Unauthenticated
     | Authenticated of AuthenticatedUser
 
-type Domain =
-    { Options: MealOptions
-      UserData: UserData }
+type Domain = { UserData: UserData }
 
 let rnd = Random()
 
@@ -32,7 +31,7 @@ let private filterByHaveHadMealRecently currentMeals daysBetweenSameMeal meal =
 
 let private filterMealsWithoutRules meal = meal.Rules.Length = 0
 
-let private getMeal currentMeals dayOfWeek model options =
+let private getMeal currentMeals dayOfWeek model =
 
     let mealsWithoutRules =
         model.AvailableMeals
@@ -41,46 +40,34 @@ let private getMeal currentMeals dayOfWeek model options =
     let meals =
         model.AvailableMeals
         |> List.filter (filterByDayOfWeek dayOfWeek)
-        |> List.filter (filterByHaveHadMealRecently currentMeals options.DaysBetweenSameMeal)
+        |> List.filter (filterByHaveHadMealRecently currentMeals model.Options.DaysBetweenSameMeal)
 
     let applicableMeals = mealsWithoutRules @ meals
 
     applicableMeals
     |> List.item (rnd.Next applicableMeals.Length)
 
-let private createMeal currentMeals index model options =
+let private createMeal currentMeals index model =
     let date = DateTime.Now.Date.AddDays(float index)
 
     let day =
         Enum.GetName(typeof<DayOfWeek>, date.DayOfWeek)
 
     let meal =
-        getMeal currentMeals date.DayOfWeek model options
+        getMeal currentMeals date.DayOfWeek model
 
     day, date.ToString("dd/MM/yyyy"), meal
 
-let calculate model options =
+let calculate model =
 
     if (model.AvailableMeals.IsEmpty) then
         model
     else
         let meals =
-            seq { for i in 1 .. options.DaysToCalculate -> i }
+            seq { for i in 1 .. model.Options.DaysToCalculate -> i }
             |> List.ofSeq
             |> List.fold (fun currentMeals index ->
                 currentMeals
-                @ [ createMeal currentMeals index model options ]) []
+                @ [ createMeal currentMeals index model ]) []
 
         { model with ChosenMeals = meals }
-
-let applyMeals model maybeMeals =
-    match maybeMeals with
-    | Ok meals ->
-        { model with
-              UserData =
-                  Authenticated
-                      ({ AvailableMeals = meals
-                         ChosenMeals = [] }) }
-    | Error _ ->
-        { model with
-              UserData = Unauthenticated }

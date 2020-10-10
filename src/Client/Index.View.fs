@@ -49,7 +49,7 @@ let button isDisabled (text: string) onClick =
                                              prop.disabled isDisabled
                                              prop.onClick onClick ] ] ]
 
-let renderMainBody user options dispatch =
+let renderMainBody user dispatch =
 
     let formInput (labelText: string) for' (inputValue: int) msg =
         Html.div [ prop.className "w-1/2 px-3"
@@ -70,12 +70,12 @@ let renderMainBody user options dispatch =
                    prop.children [ formInput
                                        "Days Between Same Meal"
                                        "days-between-meal"
-                                       options.DaysBetweenSameMeal
+                                       user.Options.DaysBetweenSameMeal
                                        ChangeDaysBetweenSameMeal
                                    formInput
                                        "Days To Calculate"
                                        "days-to-calculate"
-                                       options.DaysToCalculate
+                                       user.Options.DaysToCalculate
                                        ChangeDaysToCalculate ] ]
 
 
@@ -106,8 +106,7 @@ let renderMealList meals dispatch =
                                       Html.li [ prop.className "mb-2"
                                                 prop.text meal.Name ] ] ]
 
-    let addMealButton =
-        button false "Add Meal" (fun _ -> AddMeal |> dispatch)
+    let addMealButton = button false "Add Meal" (ignore)
 
     Html.div [ prop.className "w-full sm:w-full md:w-2/5 px-2 mb-2"
                prop.children
@@ -125,7 +124,7 @@ let renderBody state dispatch =
     let children =
         match state.UserData with
         | Authenticated user ->
-            [ renderMainBody user state.Options dispatch
+            [ renderMainBody user dispatch
               renderMealList user.AvailableMeals dispatch ]
         | Unauthenticated -> [ renderLoginButton ]
 

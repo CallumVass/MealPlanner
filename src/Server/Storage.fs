@@ -6,13 +6,6 @@ open DbUp
 open Microsoft.Extensions.Configuration
 open System.Reflection
 
-module Async =
-    let map f workflow =
-        async {
-            let! res = workflow
-            return f res
-        }
-
 type Migrator(config: IConfiguration) =
     member __.Migrate() =
         let connectionString =

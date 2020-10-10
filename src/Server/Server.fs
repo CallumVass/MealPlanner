@@ -15,34 +15,18 @@ open Giraffe.Core
 open Giraffe.Auth
 open Giraffe.Routing
 
-let tryGetData f (userId: string option) =
-    async {
-        if userId.IsSome then
-            let! result = f userId.Value
-            return Ok(result)
-        else
-            return Error "Please login"
-    }
 
-let mealApi (userId: string option) (storage: MealStorage) =
-    { GetMeals =
-          fun () ->
-              async {
-                  let! response = tryGetData storage.GetMeals userId
-                  return response
-              } }
+let mealApi userId (storage: MealStorage) =
+    { GetMeals = fun () -> storage.GetMeals userId }
 
 let createApi mealApi (context: HttpContext) =
 
     let storage = context.GetService<MealStorage>()
 
-    if (context.User.Identity.IsAuthenticated) then
-        let claim =
-            context.User.FindFirst(ClaimTypes.NameIdentifier)
+    let claim =
+        context.User.FindFirst(ClaimTypes.NameIdentifier)
 
-        storage |> mealApi (Some claim.Value)
-    else
-        storage |> mealApi None
+    storage |> mealApi claim.Value
 
 let webApi =
     Remoting.createApi ()
@@ -50,14 +34,25 @@ let webApi =
     |> Remoting.fromContext (createApi mealApi)
     |> Remoting.buildHttpHandler
 
+let createAnonymousApi (context: HttpContext) =
+    { IsAuthenticated = fun () -> async { return context.User.Identity.IsAuthenticated } }
+
+let anonymousApi =
+    Remoting.createApi ()
+    |> Remoting.withRouteBuilder Route.builder
+    |> Remoting.fromContext createAnonymousApi
+    |> Remoting.buildHttpHandler
+
 let mustBeLoggedIn =
     requiresAuthentication (challenge "Google")
 
+let authRoutes =
+    choose [ route "/login" >=> redirectTo true "/"
+             webApi ]
+
 let webApp =
-    choose [ webApi
-             mustBeLoggedIn
-             >=> route "/login"
-             >=> redirectTo true "/" ]
+    choose [ anonymousApi
+             mustBeLoggedIn >=> authRoutes ]
 
 let callbackPath = "/signin-google"
 

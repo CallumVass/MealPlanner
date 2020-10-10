@@ -6,15 +6,20 @@ open Index.Domain
 open Shared
 open System
 
+let anonymousApi =
+    Remoting.createApi ()
+    |> Remoting.withRouteBuilder Route.builder
+    |> Remoting.buildProxy<IAnonymousApi>
+
 let mealApi =
     Remoting.createApi ()
     |> Remoting.withRouteBuilder Route.builder
     |> Remoting.buildProxy<IMealApi>
 
 type Msg =
-    | MaybeGotMeals of Result<Meal list, string>
+    | AuthCheck of bool
+    | GotMeals of Meal list
     | Calculate
-    | AddMeal
     | ChangeDaysBetweenSameMeal of string
     | ChangeDaysToCalculate of string
 
@@ -22,40 +27,63 @@ let defaultOptions =
     { DaysBetweenSameMeal = 4
       DaysToCalculate = 7 }
 
-let init () =
+let defaultModel =
     { Options = defaultOptions
-      UserData = Unauthenticated },
-    Cmd.OfAsync.perform mealApi.GetMeals () MaybeGotMeals
+      AvailableMeals = []
+      ChosenMeals = [] }
+
+let init () =
+    { UserData = Unauthenticated }, Cmd.OfAsync.perform anonymousApi.IsAuthenticated () AuthCheck
+
+let authCheck model isAuthenticated =
+    if isAuthenticated then
+        { model with
+              UserData = Authenticated defaultModel },
+        Cmd.OfAsync.perform mealApi.GetMeals () GotMeals
+    else
+        model, Cmd.none
 
 let update msg model =
     match msg, model.UserData with
-    | MaybeGotMeals maybeMeals, _ -> applyMeals model maybeMeals, Cmd.none
-    | AddMeal, Authenticated user -> model, Cmd.none
-    | AddMeal, _ -> model, Cmd.none
+    | AuthCheck isAuthenticated, _ -> isAuthenticated |> authCheck model
+    | GotMeals meals, Authenticated user ->
+        let newUser = { user with AvailableMeals = meals }
+        { model with
+              UserData = Authenticated newUser },
+        Cmd.none
     | Calculate, Authenticated user ->
         { model with
-              UserData = Authenticated(calculate user model.Options) },
+              UserData = Authenticated(calculate user) },
         Cmd.none
     | Calculate, _ -> model, Cmd.none
-    | ChangeDaysBetweenSameMeal newValue, _ ->
+    | ChangeDaysBetweenSameMeal newValue, Authenticated user ->
         let value =
             match String.IsNullOrEmpty newValue with
             | true -> None
             | false -> newValue |> int |> Some
 
         let newOptions =
-            { model.Options with
+            { user.Options with
                   DaysBetweenSameMeal = value |> Option.defaultValue 0 }
 
-        { model with Options = newOptions }, Cmd.none
-    | ChangeDaysToCalculate newValue, _ ->
+        let newUserData = { user with Options = newOptions }
+
+        { model with
+              UserData = Authenticated newUserData },
+        Cmd.none
+    | ChangeDaysToCalculate newValue, Authenticated user ->
         let value =
             match String.IsNullOrEmpty newValue with
             | true -> None
             | false -> newValue |> int |> Some
 
         let newOptions =
-            { model.Options with
+            { user.Options with
                   DaysToCalculate = value |> Option.defaultValue 0 }
 
-        { model with Options = newOptions }, Cmd.none
+        let newUserData = { user with Options = newOptions }
+
+        { model with
+              UserData = Authenticated newUserData },
+        Cmd.none
+    | _, Unauthenticated -> model, Cmd.none
