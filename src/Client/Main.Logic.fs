@@ -1,6 +1,6 @@
-module App.Logic
+module Main.Logic
 
-open App.Types
+open Main.Types
 open Api
 open Elmish
 

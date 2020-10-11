@@ -14,10 +14,10 @@
     <Compile Include="Pages/Index/Index.Logic.fs" />
     <Compile Include="Pages/Index/Index.App.fs" />
     <Compile Include="Pages/Index/Index.View.fs" />
-    <Compile Include="App.Types.fs" />
-    <Compile Include="App.Logic.fs" />
-    <Compile Include="App.App.fs" />
-    <Compile Include="App.View.fs" />
+    <Compile Include="Main.Types.fs" />
+    <Compile Include="Main.Logic.fs" />
+    <Compile Include="Main.App.fs" />
+    <Compile Include="Main.View.fs" />
     <Compile Include="Root.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

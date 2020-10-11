@@ -1,9 +1,9 @@
-module App.View
+module Main.View
 
 open Feliz
 open Feliz.Router
 open Types
-open App.Logic
+open Main.Logic
 
 let renderHeader =
     let h1 =

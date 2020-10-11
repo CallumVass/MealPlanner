@@ -1,7 +1,7 @@
-module App.App
+module Main.App
 
-open App.Logic
-open App.Types
+open Main.Logic
+open Main.Types
 open Elmish
 
 open Feliz

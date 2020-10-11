@@ -1,4 +1,4 @@
-module App.Types
+module Main.Types
 
 open Elmish
 

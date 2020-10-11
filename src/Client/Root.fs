@@ -1,6 +1,6 @@
 module Root
 
-open App.App
+open Main.App
 
 open Fable.Core.JsInterop
 
@@ -15,7 +15,7 @@ open Elmish.Debug
 open Elmish.HMR
 #endif
 
-Program.mkProgram init update App.View.render
+Program.mkProgram init update Main.View.render
 #if DEBUG
 |> Program.withConsoleTrace
 #endif
