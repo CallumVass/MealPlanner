@@ -36,13 +36,17 @@ let init () =
 
     state, performAuthCheck (cmd)
 
+let getNextPageState update page msg state =
+    let newPageState, nextCmd = update
+    { state with
+          CurrentPage = page newPageState },
+    Cmd.map msg nextCmd
+
 let update (msg: Msg) (state: State) =
     match msg, state.CurrentPage with
     | IndexMsg indexMsg, Page.Index indexState ->
-        let indexState, indexCmd = Index.App.update indexMsg indexState
-        { state with
-              CurrentPage = Page.Index indexState },
-        Cmd.map IndexMsg indexCmd
+        state
+        |> getNextPageState (Index.App.update indexMsg indexState) Page.Index IndexMsg
     | AuthCheck (isAuth, nextCmd), _ -> state |> (checkIsAuth isAuth nextCmd)
     | UrlChanged nextUrl, _ ->
         let show page =

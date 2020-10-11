@@ -5,13 +5,24 @@ open Feliz.Router
 open Types
 open Main.Logic
 
-let renderHeader =
+let links =
+    [ ViewHelpers.buttonLink "Add Meal" (Router.format ("meals", "new"))
+      ViewHelpers.buttonLink "Add Rule" (Router.format ("rules", "new")) ]
+
+let renderLinks state dispatch =
+    match state.User with
+    | Anonymous -> Html.none
+    | Authenticated -> Html.div links
+
+let renderHeader state dispatch =
     let h1 =
         Html.h1 [ prop.className "text-3xl font-semibold text-white"
                   prop.text "Meal Planner" ]
 
+    let links = renderLinks state dispatch
+
     Html.div [ prop.className "bg-gradient-to-br from-purple-400 to-purple-700 flex p-4 mb-6 justify-between"
-               prop.children h1 ]
+               prop.children [ h1; links ] ]
 
 let renderLoginButton =
     Html.div [ prop.className "w-full"
@@ -31,7 +42,8 @@ let render (state: State) (dispatch: Msg -> unit) =
 
     let page =
         Html.div [ prop.className "min-h-screen bg-gray-200 text-gray-800"
-                   prop.children [ renderHeader; body ] ]
+                   prop.children [ renderHeader state dispatch
+                                   body ] ]
 
     React.router [ router.onUrlChanged (parseUrl >> UrlChanged >> dispatch)
                    router.children page ]
