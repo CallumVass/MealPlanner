@@ -81,7 +81,7 @@ let getMeals connectionString userId =
         return meals |> List.ofSeq
     }
 
-let getMeal connectionString userId mealId =
+let getMeal connectionString mealId userId =
     let sql = """
     SELECT Id, Name
         FROM Meals
@@ -96,7 +96,7 @@ let getMeal connectionString userId mealId =
                 |> Option.asyncApply (getRulesForMeal connection)
     }
 
-let addMeal connectionString userId (meal: Meal) =
+let addMeal connectionString (meal: Meal) userId =
     let sql = """
     INSERT INTO Meals (Name, UserId) VALUES (@name, @userId)
     """
@@ -108,7 +108,7 @@ let addMeal connectionString userId (meal: Meal) =
         return result
     }
 
-let addRule connectionString userId (rule: Rule) =
+let addRule connectionString (rule: Rule) userId =
     let sql = """
     INSERT INTO Rules (Name, UserId) VALUES (@name, @userId)
     """
@@ -138,13 +138,13 @@ type MealStorage(config: IConfiguration) =
     let connectionString =
         config.GetConnectionString("MealPlanner")
 
-    member __.GetMeals userId = getMeals connectionString userId
+    member __.GetMeals userId = userId |> getMeals connectionString
 
-    member __.GetMeal userId mealId =
-        mealId |> getMeal connectionString userId
+    member __.GetMeal mealId userId =
+        userId |> getMeal connectionString mealId
 
-    member __.AddMeal userId meal = meal |> addMeal connectionString userId
+    member __.AddMeal meal userId = userId |> addMeal connectionString meal
 
-    member __.GetRules userId = getRules connectionString userId
+    member __.GetRules userId = userId |> getRules connectionString
 
-    member __.AddRule userId rule = rule |> addRule connectionString userId
+    member __.AddRule rule userId = userId |> addRule connectionString rule

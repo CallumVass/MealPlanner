@@ -17,11 +17,11 @@ open Giraffe.Routing
 open System
 
 let mealApi userId (storage: MealStorage) =
-    { GetMeals = fun () -> storage.GetMeals userId
-      GetMeal = fun mealId -> mealId |> storage.GetMeal userId
-      AddMeal = fun meal -> meal |> storage.AddMeal userId
-      GetRules = fun () -> storage.GetRules userId
-      AddRule = fun rule -> rule |> storage.AddRule userId }
+    { GetMeals = fun () -> userId |> storage.GetMeals
+      GetMeal = fun mealId -> userId |> storage.GetMeal mealId
+      AddMeal = fun meal -> userId |> storage.AddMeal meal
+      GetRules = fun () -> userId |> storage.GetRules
+      AddRule = fun rule -> userId |> storage.AddRule rule }
 
 let createApi mealApi (context: HttpContext) =
 
