@@ -5,9 +5,13 @@ open Feliz.Router
 open Types
 open Main.Logic
 
+let linkContainer (link: ReactElement) =
+    Html.span [ prop.className "mr-3"
+                prop.children link ]
+
 let links =
-    [ ViewHelpers.buttonLink "Add Meal" (Router.format ("meals", "new"))
-      ViewHelpers.buttonLink "Add Rule" (Router.format ("rules", "new")) ]
+    [ linkContainer (ViewHelpers.buttonLink "Add Meal" (Router.format ("meals", "new")))
+      linkContainer (ViewHelpers.buttonLink "Add Rule" (Router.format ("rules", "new"))) ]
 
 let renderLinks state dispatch =
     match state.User with
@@ -21,7 +25,8 @@ let renderHeader state dispatch =
 
     let links = renderLinks state dispatch
 
-    Html.div [ prop.className "bg-gradient-to-br from-purple-400 to-purple-700 flex p-4 mb-6 justify-between"
+    Html.div [ prop.className
+                   "bg-gradient-to-br from-purple-400 to-purple-700 flex p-4 mb-6 justify-between items-center"
                prop.children [ h1; links ] ]
 
 let renderLoginButton =
