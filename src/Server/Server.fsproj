@@ -9,8 +9,8 @@
   <ItemGroup>
     <None Include="paket.references" />
     <Compile Include="DbExtensions.fs" />
-    <Compile Include="Storage.fs" />
     <Compile Include="Extensions.fs" />
+    <Compile Include="Storage.fs" />
     <Compile Include="DapperOptionHandler.fs" />
     <Compile Include="Server.fs" />
     <EmbeddedResource Include="Scripts/Script0001 - Initial.sql" />

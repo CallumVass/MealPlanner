@@ -16,9 +16,12 @@ open Giraffe.Auth
 open Giraffe.Routing
 open System
 
-
 let mealApi userId (storage: MealStorage) =
-    { GetMeals = fun () -> storage.GetMeals userId }
+    { GetMeals = fun () -> storage.GetMeals userId
+      GetMeal = fun mealId -> mealId |> storage.GetMeal userId
+      AddMeal = fun meal -> meal |> storage.AddMeal userId
+      GetRules = fun () -> storage.GetRules userId
+      AddRule = fun rule -> rule |> storage.AddRule userId }
 
 let createApi mealApi (context: HttpContext) =
 

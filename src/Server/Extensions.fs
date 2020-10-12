@@ -10,6 +10,25 @@ open Microsoft.AspNetCore.Authentication
 open System
 open Microsoft.Extensions.Configuration
 
+[<RequireQualifiedAccess>]
+module Seq =
+    let inline asyncMap fn v = v |> Seq.map (fn) |> Async.Parallel
+
+[<RequireQualifiedAccess>]
+module Option =
+    let inline asyncApply fn v =
+        let executeSome fn v =
+            async {
+                let! result = v |> fn
+                return Some result
+            }
+
+        async {
+            match v with
+            | Some m -> return! m |> executeSome fn
+            | None -> return None
+        }
+
 type Microsoft.FSharp.Control.AsyncBuilder with
     member this.Bind(task, f) = this.Bind(Async.AwaitTask task, f)
 

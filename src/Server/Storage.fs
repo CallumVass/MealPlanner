@@ -49,7 +49,7 @@ let private toDomain (meal: MealEntity) (mealRules: MealRuleEntity seq) =
       Name = meal.Name
       Rules = (toRules mealRules) |> List.ofSeq }
 
-let private getRules connection (meal: MealEntity) =
+let private getRulesForMeal connection (meal: MealEntity) =
     let sql = """
     SELECT DISTINCT r.Id, r.Name, rd.DayOfWeek
         FROM Rules r
@@ -76,10 +76,62 @@ let getMeals connectionString userId =
 
         let! meals =
             result
-            |> Seq.map (getRules connection)
-            |> Async.Parallel
+            |> Seq.asyncMap (getRulesForMeal connection)
 
         return meals |> List.ofSeq
+    }
+
+let getMeal connectionString userId mealId =
+    let sql = """
+    SELECT Id, Name
+        FROM Meals
+    WHERE UserId = @userId AND Id = @mealId
+    """
+
+    async {
+        use! connection = getConnection connectionString
+        let! result = querySingle connection sql !{| userId = userId; mealId = mealId |}
+
+        return! result
+                |> Option.asyncApply (getRulesForMeal connection)
+    }
+
+let addMeal connectionString userId (meal: Meal) =
+    let sql = """
+    INSERT INTO Meals (Name, UserId) VALUES (@name, @userId)
+    """
+
+    async {
+        use! connection = getConnection connectionString
+        let! result = execute connection sql !{| userId = userId; name = meal.Name |}
+
+        return result
+    }
+
+let addRule connectionString userId (rule: Rule) =
+    let sql = """
+    INSERT INTO Rules (Name, UserId) VALUES (@name, @userId)
+    """
+
+    async {
+        use! connection = getConnection connectionString
+        let! result = execute connection sql !{| userId = userId; name = rule.Name |}
+
+        return result
+    }
+
+let private getRules connectionString userId =
+    let sql = """
+    SELECT DISTINCT r.Id, r.Name, rd.DayOfWeek
+        FROM Rules r
+	INNER JOIN RuleRuleDays rd ON r.Id = rd.RuleId
+    WHERE r.UserId = @userId
+    """
+
+    async {
+        use! connection = getConnection connectionString
+        let! result = query connection sql !{| userId = userId |}
+        return result |> toRules |> List.ofSeq
     }
 
 type MealStorage(config: IConfiguration) =
@@ -87,3 +139,12 @@ type MealStorage(config: IConfiguration) =
         config.GetConnectionString("MealPlanner")
 
     member __.GetMeals userId = getMeals connectionString userId
+
+    member __.GetMeal userId mealId =
+        mealId |> getMeal connectionString userId
+
+    member __.AddMeal userId meal = meal |> addMeal connectionString userId
+
+    member __.GetRules userId = getRules connectionString userId
+
+    member __.AddRule userId rule = rule |> addRule connectionString userId

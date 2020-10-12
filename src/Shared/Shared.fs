@@ -22,4 +22,10 @@ module Route =
 type IAnonymousApi =
     { IsAuthenticated: unit -> Async<bool> }
 
-type IMealApi = { GetMeals: unit -> Async<Meal list> }
+type IMealApi =
+    { GetMeals: unit -> Async<Meal list>
+      GetMeal: Guid -> Async<Meal option>
+      AddMeal: Meal -> Async<int>
+
+      GetRules: unit -> Async<Rule list>
+      AddRule: Rule -> Async<int> }
