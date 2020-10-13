@@ -65,7 +65,7 @@ let renderMainBody user dispatch =
 let renderMealItem meal =
 
     let actions =
-        Html.div [ ViewHelpers.buttonLink "View" (Router.format ("meals", (sprintf "%A" meal.Id), "edit")) ]
+        Html.div [ ViewHelpers.buttonLink "Edit" (Router.format ("meals", (sprintf "%A" meal.Id), "edit")) ]
 
     Html.div [ prop.className "flex justify-between items-center"
                prop.children [ Html.text meal.Name
