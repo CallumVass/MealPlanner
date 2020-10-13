@@ -3,6 +3,9 @@ module Index.View
 open Fable.Core.JsInterop
 open Feliz
 open Feliz.Router
+open Feliz.UseElmish
+open Elmish
+open Index.App
 open Index.Types
 open Shared
 
@@ -89,4 +92,10 @@ let renderBody state dispatch =
                prop.children [ Html.div [ prop.className "flex flex-wrap"
                                           prop.children children ] ] ]
 
-let render state dispatch = renderBody state dispatch
+// let render state dispatch = renderBody state dispatch
+
+
+let render =
+    React.functionComponent (fun () ->
+        let state, dispatch = React.useElmish (init, update, [||])
+        renderBody state dispatch)

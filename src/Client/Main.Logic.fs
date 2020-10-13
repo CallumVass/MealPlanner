@@ -4,12 +4,6 @@ open Main.Types
 open Api
 open Elmish
 
-let parseUrl =
-    function
-    | [] -> Url.Index
-    // | [ "meal"; Route.Int mealId; "edit" ] -> Url.EditMeal mealId
-    | _ -> Url.Unknown
-
 let performAuthCheck nextCmd =
     let authCheckCmd (dispatch: Msg -> unit): unit =
         let authCheck =

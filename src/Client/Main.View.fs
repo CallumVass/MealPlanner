@@ -40,16 +40,18 @@ let renderCurrentState activePage state =
 
 let render (state: State) (dispatch: Msg -> unit) =
     let activePage =
-        match state.CurrentPage with
-        | Page.Index page -> Index.View.render page (IndexMsg >> dispatch)
-        | Page.EditMeal page -> EditMeal.View.render page (EditMealMsg >> dispatch)
+        match state.CurrentUrl with
+        | [] -> Index.View.render
+        | [ "meals"; Route.Guid mealId; "edit" ] -> EditMeal.View.render mealId
+        | _ -> Index.View.render
 
-    let body = (state |> renderCurrentState activePage)
+    let body =
+        state |> (renderCurrentState (activePage ()))
 
     let page =
         Html.div [ prop.className "min-h-screen bg-gray-200 text-gray-800"
                    prop.children [ renderHeader state dispatch
                                    body ] ]
 
-    React.router [ router.onUrlChanged (parseUrl >> UrlChanged >> dispatch)
+    React.router [ router.onUrlChanged (UrlChanged >> dispatch)
                    router.children page ]
