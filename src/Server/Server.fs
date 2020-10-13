@@ -93,6 +93,7 @@ let app =
         use_static "public"
         use_gzip
         host_config configureHost
+        use_developer_exceptions
     }
 
 [<EntryPoint>]

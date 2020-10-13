@@ -64,9 +64,10 @@ type Saturn.Application.ApplicationBuilder with
                 jsonToClaimMap
                 |> Seq.iter (fun (k, v) -> opt.ClaimActions.MapJsonKey(v, k))
                 opt.ClaimActions.MapJsonSubKey("urn:google:image:url", "image", "url")
+                opt.CorrelationCookie.SameSite <- SameSiteMode.Lax
                 let ev = opt.Events
 
-                ev.OnCreatingTicket <- Func<_, _> Saturn.Application.parseAndValidateOauthTicket
+                ev.OnCreatingTicket <- Func<_, _> parseAndValidateOauthTicket
 
                 )
             |> ignore
