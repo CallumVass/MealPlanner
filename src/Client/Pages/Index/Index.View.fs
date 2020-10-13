@@ -96,6 +96,8 @@ let renderBody state dispatch =
 
 
 let render =
-    React.functionComponent (fun () ->
-        let state, dispatch = React.useElmish (init, update, [||])
-        renderBody state dispatch)
+    React.functionComponent
+        ("Index",
+         (fun () ->
+             let state, dispatch = React.useElmish (init, update, [||])
+             renderBody state dispatch))

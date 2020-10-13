@@ -41,12 +41,12 @@ let renderCurrentState activePage state =
 let render (state: State) (dispatch: Msg -> unit) =
     let activePage =
         match state.CurrentUrl with
-        | [] -> Index.View.render
-        | [ "meals"; Route.Guid mealId; "edit" ] -> EditMeal.View.render mealId
-        | _ -> Index.View.render
+        | [] -> Index.View.render ()
+        | [ "meals"; Route.Guid mealId; "edit" ] -> EditMeal.View.render ({ MealId = mealId })
+        | _ -> Index.View.render ()
 
     let body =
-        state |> (renderCurrentState (activePage ()))
+        state |> (renderCurrentState (activePage))
 
     let page =
         Html.div [ prop.className "min-h-screen bg-gray-200 text-gray-800"
