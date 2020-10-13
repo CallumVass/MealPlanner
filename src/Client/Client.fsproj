@@ -9,11 +9,16 @@
     <None Include="index.html" />
     <None Include="paket.references" />
     <Compile Include="ViewHelpers.fs" />
+    <Compile Include="Extensions.fs" />
     <Compile Include="Api.fs" />
     <Compile Include="Pages/Index/Index.Types.fs" />
     <Compile Include="Pages/Index/Index.Logic.fs" />
     <Compile Include="Pages/Index/Index.App.fs" />
     <Compile Include="Pages/Index/Index.View.fs" />
+    <Compile Include="Pages/EditMeal/EditMeal.Types.fs" />
+    <Compile Include="Pages/EditMeal/EditMeal.Logic.fs" />
+    <Compile Include="Pages/EditMeal/EditMeal.App.fs" />
+    <Compile Include="Pages/EditMeal/EditMeal.View.fs" />
     <Compile Include="Main.Types.fs" />
     <Compile Include="Main.Logic.fs" />
     <Compile Include="Main.App.fs" />

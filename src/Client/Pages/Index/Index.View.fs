@@ -2,6 +2,7 @@ module Index.View
 
 open Fable.Core.JsInterop
 open Feliz
+open Feliz.Router
 open Index.Types
 open Shared
 
@@ -58,12 +59,21 @@ let renderMainBody user dispatch =
                                                   createMealPlanButton ])
                                mealPlan ] ]
 
+let renderMealItem meal =
+
+    let actions =
+        Html.div [ ViewHelpers.buttonLink "View" (Router.format ("meals", (sprintf "%A" meal.Id), "edit")) ]
+
+    Html.div [ prop.className "flex justify-between items-center"
+               prop.children [ Html.text meal.Name
+                               actions ] ]
+
 let renderMealList meals =
     let mealList =
-        Html.ul [ prop.className "flex items-center flex-col text-sm"
+        Html.ul [ prop.className "flex flex-col text-sm"
                   prop.children [ for meal in meals ->
-                                      Html.li [ prop.className "mb-2"
-                                                prop.text meal.Name ] ] ]
+                                      Html.li [ prop.className "p-4 border-b"
+                                                prop.children (renderMealItem meal) ] ] ]
 
     Html.div [ prop.className "w-full sm:w-full md:w-2/5 px-2 mb-2"
                prop.children

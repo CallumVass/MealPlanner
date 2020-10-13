@@ -13,7 +13,7 @@ let links =
     [ linkContainer (ViewHelpers.buttonLink "Add Meal" (Router.format ("meals", "new")))
       linkContainer (ViewHelpers.buttonLink "Add Rule" (Router.format ("rules", "new"))) ]
 
-let renderLinks state dispatch =
+let renderLinks state =
     match state.User with
     | Anonymous -> Html.none
     | Authenticated -> Html.div links
@@ -23,7 +23,7 @@ let renderHeader state dispatch =
         Html.h1 [ prop.className "text-3xl font-semibold text-white"
                   prop.text "Meal Planner" ]
 
-    let links = renderLinks state dispatch
+    let links = renderLinks state
 
     Html.div [ prop.className
                    "bg-gradient-to-br from-purple-400 to-purple-700 flex p-4 mb-6 justify-between items-center"
@@ -41,7 +41,8 @@ let renderCurrentState activePage state =
 let render (state: State) (dispatch: Msg -> unit) =
     let activePage =
         match state.CurrentPage with
-        | Page.Index index -> Index.View.render index (IndexMsg >> dispatch)
+        | Page.Index page -> Index.View.render page (IndexMsg >> dispatch)
+        | Page.EditMeal page -> EditMeal.View.render page (EditMealMsg >> dispatch)
 
     let body = (state |> renderCurrentState activePage)
 

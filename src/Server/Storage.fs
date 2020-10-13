@@ -32,6 +32,9 @@ type private MealRuleEntity =
 let private toDayOfWeek mealRule =
     Enum.Parse<DayOfWeek>(mealRule.DayOfWeek)
 
+let private toDayOfWeekString dayOfWeek =
+    Enum.GetName(typeof<DayOfWeek>, dayOfWeek)
+
 let private toRule mealRule =
     let ((id, name), mealRules) = mealRule
 
@@ -61,6 +64,56 @@ let private getRulesForMeal connection (meal: MealEntity) =
     async {
         let! result = query connection sql !{| mealId = meal.Id |}
         return result |> (toDomain meal)
+    }
+
+let private insertRuleDay connection ruleId dayOfWeek =
+    let sql = """
+    INSERT INTO RuleRuleDays (RuleId, DayOfWeek)
+    VALUES (@ruleId, @dayOfWeek)
+    """
+
+    async {
+
+        let dayOfWeekString = dayOfWeek |> toDayOfWeekString
+
+        let! _ =
+            execute
+                connection
+                sql
+                !{| ruleId = ruleId
+                    dayOfWeek = dayOfWeekString |}
+
+        return ()
+    }
+
+let private insertRuleDays connection applicableOn ruleId =
+    async {
+        let! _ =
+            applicableOn
+            |> Seq.asyncMap (insertRuleDay connection ruleId)
+
+        return ()
+    }
+
+let private insertMealRule connection mealId (rule: Rule) =
+    let sql = """
+    INSERT INTO MealRules (MealId, RuleId)
+    VALUES (@mealId, @ruleId)
+    """
+
+    async {
+        let! _ = execute connection sql !{| ruleId = rule.Id; mealId = mealId |}
+
+        return ()
+    }
+
+let private insertMealRules connection (rules: Rule seq) mealId =
+    async {
+        let! _ =
+            rules
+            |> Seq.asyncMap (insertMealRule connection mealId)
+
+        return ()
     }
 
 let getMeals connectionString userId =
@@ -98,26 +151,38 @@ let getMeal connectionString mealId userId =
 
 let addMeal connectionString (meal: Meal) userId =
     let sql = """
-    INSERT INTO Meals (Name, UserId) VALUES (@name, @userId)
+    INSERT INTO Meals (Name, UserId)
+    OUTPUT Inserted.Id
+    VALUES (@name, @userId)
     """
 
     async {
         use! connection = getConnection connectionString
-        let! result = execute connection sql !{| userId = userId; name = meal.Name |}
+        let! mealId = querySingle connection sql !{| userId = userId; name = meal.Name |}
 
-        return result
+        let! _ =
+            mealId
+            |> Option.asyncApply (insertMealRules connection meal.Rules)
+
+        return ()
     }
 
 let addRule connectionString (rule: Rule) userId =
     let sql = """
-    INSERT INTO Rules (Name, UserId) VALUES (@name, @userId)
+    INSERT INTO Rules (Name, UserId)
+    OUTPUT Inserted.Id
+    VALUES (@name, @userId)
     """
 
     async {
         use! connection = getConnection connectionString
-        let! result = execute connection sql !{| userId = userId; name = rule.Name |}
+        let! ruleId = querySingle connection sql !{| userId = userId; name = rule.Name |}
 
-        return result
+        let! _ =
+            ruleId
+            |> Option.asyncApply (insertRuleDays connection rule.ApplicableOn)
+
+        return ()
     }
 
 let private getRules connectionString userId =

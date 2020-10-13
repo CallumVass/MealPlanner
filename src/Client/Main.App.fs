@@ -20,18 +20,17 @@ let init () =
     let (state, cmd) =
         match initialUrl with
         | Url.Index ->
-
             let nextPage = Page.Index indexState
             { defaultState with
                   CurrentPage = nextPage },
             Cmd.map IndexMsg indexCmd
 
-        // | Url.EditMeal mealId ->
-        //     let editMealState, editMealCmd = EditMeal.init ()
-        //     let nextPage = Page.EditMeal editMealState
-        //     { defaultState with
-        //           CurrentPage = nextPage },
-        //     Cmd.map EditMealMsg editMealCmd
+        | Url.EditMeal mealId ->
+            let editMealState, editMealCmd = EditMeal.App.init mealId
+            let nextPage = Page.EditMeal editMealState
+            { defaultState with
+                  CurrentPage = nextPage },
+            Cmd.map EditMealMsg editMealCmd
         | Url.Unknown -> defaultState, Cmd.none
 
     state, performAuthCheck (cmd)
@@ -44,9 +43,12 @@ let getNextPageState update page msg state =
 
 let update (msg: Msg) (state: State) =
     match msg, state.CurrentPage with
-    | IndexMsg indexMsg, Page.Index indexState ->
+    | IndexMsg newMsg, Page.Index newState ->
         state
-        |> getNextPageState (Index.App.update indexMsg indexState) Page.Index IndexMsg
+        |> getNextPageState (Index.App.update newMsg newState) Page.Index IndexMsg
+    | EditMealMsg newMsg, Page.EditMeal newState ->
+        state
+        |> getNextPageState (EditMeal.App.update newMsg newState) Page.EditMeal EditMealMsg
     | AuthCheck (isAuth, nextCmd), _ -> state |> (checkIsAuth isAuth nextCmd)
     | UrlChanged nextUrl, _ ->
         let show page =
@@ -58,4 +60,8 @@ let update (msg: Msg) (state: State) =
         | Url.Index ->
             let indexState, indexCmd = Index.App.init ()
             show (Page.Index indexState), Cmd.map IndexMsg indexCmd
+        | Url.EditMeal mealId ->
+            let editMealState, editMealCmd = EditMeal.App.init mealId
+            show (Page.EditMeal editMealState), Cmd.map EditMealMsg editMealCmd
         | Url.Unknown -> state, Cmd.navigate "/"
+    | _, _ -> state, Cmd.none

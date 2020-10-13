@@ -25,7 +25,7 @@ type IAnonymousApi =
 type IMealApi =
     { GetMeals: unit -> Async<Meal list>
       GetMeal: Guid -> Async<Meal option>
-      AddMeal: Meal -> Async<int>
+      AddMeal: Meal -> Async<unit>
 
       GetRules: unit -> Async<Rule list>
-      AddRule: Rule -> Async<int> }
+      AddRule: Rule -> Async<unit> }
