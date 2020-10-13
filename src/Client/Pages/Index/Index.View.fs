@@ -92,9 +92,6 @@ let renderBody state dispatch =
                prop.children [ Html.div [ prop.className "flex flex-wrap"
                                           prop.children children ] ] ]
 
-// let render state dispatch = renderBody state dispatch
-
-
 let render =
     React.functionComponent
         ("Index",

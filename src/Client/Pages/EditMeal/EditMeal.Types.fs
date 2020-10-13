@@ -1,11 +1,7 @@
 module EditMeal.Types
 
-open Shared
+open System
 
-type State = { Id: string }
+type State = { MealId: Guid }
 
-type Msg =
-    | GotMeals of Meal list
-    | Calculate
-    | ChangeDaysBetweenSameMeal of string
-    | ChangeDaysToCalculate of string
+type Msg = | DoNothing
