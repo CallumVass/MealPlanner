@@ -1,4 +1,4 @@
-namespace Shared
+module Shared.Types
 
 open System
 

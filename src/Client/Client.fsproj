@@ -8,13 +8,14 @@
   <ItemGroup>
     <None Include="index.html" />
     <None Include="paket.references" />
+    <Compile Include="Form.fs" />
     <Compile Include="ViewHelpers.fs" />
     <Compile Include="Extensions.fs" />
     <Compile Include="Api.fs" />
-    <Compile Include="Pages/Index/Index.Types.fs" />
-    <Compile Include="Pages/Index/Index.Logic.fs" />
-    <Compile Include="Pages/Index/Index.App.fs" />
-    <Compile Include="Pages/Index/Index.View.fs" />
+    <Compile Include="Pages/Home/Home.Types.fs" />
+    <Compile Include="Pages/Home/Home.Logic.fs" />
+    <Compile Include="Pages/Home/Home.App.fs" />
+    <Compile Include="Pages/Home/Home.View.fs" />
     <Compile Include="Pages/EditMeal/EditMeal.Types.fs" />
     <Compile Include="Pages/EditMeal/EditMeal.Logic.fs" />
     <Compile Include="Pages/EditMeal/EditMeal.App.fs" />

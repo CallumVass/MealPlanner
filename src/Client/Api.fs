@@ -1,7 +1,7 @@
 module Api
 
 open Fable.Remoting.Client
-open Shared
+open Shared.Types
 
 let anonymousApi =
     Remoting.createApi ()

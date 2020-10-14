@@ -1,6 +1,6 @@
 module Storage
 
-open Shared
+open Shared.Types
 open System
 open DbUp
 open Microsoft.Extensions.Configuration

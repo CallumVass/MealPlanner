@@ -3,22 +3,21 @@ module Main.View
 open Feliz
 open Feliz.Router
 open Types
-open Main.Logic
 
-let linkContainer (link: ReactElement) =
+let private linkContainer (link: ReactElement) =
     Html.span [ prop.className "mr-3"
                 prop.children link ]
 
-let links =
+let private links =
     [ linkContainer (ViewHelpers.buttonLink "Add Meal" (Router.format ("meals", "new")))
       linkContainer (ViewHelpers.buttonLink "Add Rule" (Router.format ("rules", "new"))) ]
 
-let renderLinks state =
+let private renderLinks state =
     match state.User with
     | Anonymous -> Html.none
     | Authenticated -> Html.div links
 
-let renderHeader state dispatch =
+let private renderHeader state =
     let h1 =
         Html.h1 [ prop.className "text-3xl font-semibold text-white"
                   prop.text "Meal Planner" ]
@@ -29,11 +28,12 @@ let renderHeader state dispatch =
                    "bg-gradient-to-br from-purple-400 to-purple-700 flex p-4 mb-6 justify-between items-center"
                prop.children [ h1; links ] ]
 
-let renderLoginButton =
+let private renderLoginButton =
     Html.div [ prop.className "w-full"
-               prop.children (ViewHelpers.buttonLink "Login with Google" "/login") ]
+               prop.children [ Html.div [ prop.className "ml-6"
+                                          prop.children (ViewHelpers.buttonLink "Login with Google" "/login") ] ] ]
 
-let renderCurrentState activePage state =
+let private renderCurrentState activePage state =
     match state.User with
     | Authenticated -> activePage
     | Anonymous -> renderLoginButton
@@ -41,16 +41,16 @@ let renderCurrentState activePage state =
 let render (state: State) (dispatch: Msg -> unit) =
     let activePage =
         match state.CurrentUrl with
-        | [] -> Index.View.render ()
+        | [] -> Home.View.render ()
         | [ "meals"; Route.Guid mealId; "edit" ] -> EditMeal.View.render ({ MealId = mealId })
-        | _ -> Index.View.render ()
+        | _ -> Home.View.render ()
 
     let body =
         state |> (renderCurrentState (activePage))
 
     let page =
         Html.div [ prop.className "min-h-screen bg-gray-200 text-gray-800"
-                   prop.children [ renderHeader state dispatch
+                   prop.children [ renderHeader state
                                    body ] ]
 
     React.router [ router.onUrlChanged (UrlChanged >> dispatch)

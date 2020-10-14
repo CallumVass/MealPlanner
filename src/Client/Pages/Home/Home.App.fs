@@ -1,11 +1,11 @@
-module Index.App
+module Home.App
 
 open Elmish
-open Index.Types
-open Shared
+open Home.Types
+open Shared.Types
 open System
 open Api
-open Index.Logic
+open Home.Logic
 
 let defaultOptions =
     { DaysBetweenSameMeal = 14
@@ -13,15 +13,28 @@ let defaultOptions =
 
 let defaultState =
     { Options = defaultOptions
-      AvailableMeals = []
+      AvailableMeals = HasNotStartedYet
       ChosenMeals = [] }
 
 let init () =
-    defaultState, Cmd.OfAsync.perform mealApi.GetMeals () GotMeals
+    defaultState, Cmd.ofMsg (GetMeals Started)
 
 let update msg state =
     match msg with
-    | GotMeals meals -> { state with AvailableMeals = meals }, Cmd.none
+    | GetMeals Started ->
+        let loadMeals =
+            async {
+                let! meals = mealApi.GetMeals()
+                return GetMeals(Finished meals)
+            }
+
+        { state with
+              AvailableMeals = InProgress },
+        Cmd.fromAsync loadMeals
+    | GetMeals (Finished meals) ->
+        { state with
+              AvailableMeals = Resolved meals },
+        Cmd.none
     | Calculate -> state |> calculate, Cmd.none
     | ChangeDaysBetweenSameMeal newValue ->
         let value =

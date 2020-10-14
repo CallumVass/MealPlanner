@@ -1,14 +1,14 @@
-module Index.Types
+module Home.Types
 
-open Shared
+open Shared.Types
 
 type State =
     { Options: MealOptions
-      AvailableMeals: Meal list
+      AvailableMeals: Deferred<Meal list>
       ChosenMeals: (string * string * Meal) list }
 
 type Msg =
-    | GotMeals of Meal list
+    | GetMeals of AsyncOperationStatus<Meal list>
     | Calculate
     | ChangeDaysBetweenSameMeal of string
     | ChangeDaysToCalculate of string

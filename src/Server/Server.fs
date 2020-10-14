@@ -3,7 +3,7 @@ module Server
 open Fable.Remoting.Server
 open Fable.Remoting.Giraffe
 open Saturn
-open Shared
+open Shared.Types
 open Storage
 open System.Security.Claims
 open Microsoft.AspNetCore.Http
@@ -54,7 +54,7 @@ let mustBeLoggedIn =
     requiresAuthentication (challenge "Google")
 
 let authRoutes =
-    choose [ route "/login" >=> redirectTo true "/"
+    choose [ route "/login" >=> redirectTo false "/"
              webApi ]
 
 let webApp =

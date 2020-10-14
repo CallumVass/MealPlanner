@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Shared.fs" />
+    <Compile Include="Types.fs" />
+    <Compile Include="Validation.fs" />
   </ItemGroup>
 </Project>
