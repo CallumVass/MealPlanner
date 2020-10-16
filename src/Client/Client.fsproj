@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.fsproj" />
@@ -8,6 +9,7 @@
   <ItemGroup>
     <None Include="index.html" />
     <None Include="paket.references" />
+    <Compile Include="FormHelpers.fs" />
     <Compile Include="Form.fs" />
     <Compile Include="ViewHelpers.fs" />
     <Compile Include="Extensions.fs" />

@@ -2,16 +2,23 @@ module Shared.Validation
 
 type ValidationErrorType =
     | IsEmpty
-    | IsBelowMinimalLength of int
-    | IsAboveMaximumLength of int
+    | IsOutOfRange of int * int
 
 module ValidationErrorType =
-    let explain =
+    let toString =
         function
         | IsEmpty -> "The value is required"
-        | IsBelowMinimalLength l -> sprintf "The value must be at least %i" l
-        | IsAboveMaximumLength l -> sprintf "The value must not be more than %i" l
+        | IsOutOfRange (min, max) -> sprintf "The value must be between %i and %i" min max
 
 type ValidationError =
     { Field: string
       Type: ValidationErrorType }
+
+let validateRange min max value =
+    if value < min || value > max then IsOutOfRange(min, max) |> Some else None
+
+let validate rules =
+    List.map
+        ((fun (n, e) -> n, Option.get e)
+         >> (fun (f, t) -> { Field = f; Type = t }))
+        (rules |> List.filter (snd >> Option.isSome))

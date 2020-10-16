@@ -55,12 +55,12 @@ let calculate state =
             state
         else
             let meals =
-                seq { for i in 1 .. state.Options.DaysToCalculate -> i }
+                seq { for i in 1 .. state.Options.FormData.DaysToCalculate -> i }
                 |> List.ofSeq
                 |> List.fold (fun currentMeals index ->
                     currentMeals
                     @ [ meals
-                        |> createMeal currentMeals index state.Options.DaysBetweenSameMeal ]) []
+                        |> createMeal currentMeals index state.Options.FormData.DaysBetweenSameMeal ]) []
 
             { state with ChosenMeals = meals }
     | _ -> state

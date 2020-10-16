@@ -1,7 +1,6 @@
 module Main.Types
 
 open Elmish
-open System
 
 type ApplicationUser =
     | Anonymous

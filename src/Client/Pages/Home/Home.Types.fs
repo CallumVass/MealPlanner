@@ -1,14 +1,14 @@
 module Home.Types
 
 open Shared.Types
+open Form
 
 type State =
-    { Options: MealOptions
+    { Options: ValidatedForm<MealOptions>
       AvailableMeals: Deferred<Meal list>
       ChosenMeals: (string * string * Meal) list }
 
 type Msg =
     | GetMeals of AsyncOperationStatus<Meal list>
     | Calculate
-    | ChangeDaysBetweenSameMeal of string
-    | ChangeDaysToCalculate of string
+    | FormChanged of MealOptions

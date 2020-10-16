@@ -3,16 +3,17 @@ module Home.App
 open Elmish
 open Home.Types
 open Shared.Types
-open System
 open Api
 open Home.Logic
+open Form
+open Shared.Home.Validation
 
 let defaultOptions =
     { DaysBetweenSameMeal = 14
       DaysToCalculate = 7 }
 
 let defaultState =
-    { Options = defaultOptions
+    { Options = defaultOptions |> ValidatedForm.init
       AvailableMeals = HasNotStartedYet
       ChosenMeals = [] }
 
@@ -36,25 +37,10 @@ let update msg state =
               AvailableMeals = Resolved meals },
         Cmd.none
     | Calculate -> state |> calculate, Cmd.none
-    | ChangeDaysBetweenSameMeal newValue ->
-        let value =
-            match String.IsNullOrEmpty newValue with
-            | true -> None
-            | false -> newValue |> int |> Some
-
-        let newOptions =
-            { state.Options with
-                  DaysBetweenSameMeal = value |> Option.defaultValue 0 }
-
-        { state with Options = newOptions }, Cmd.none
-    | ChangeDaysToCalculate newValue ->
-        let value =
-            match String.IsNullOrEmpty newValue with
-            | true -> None
-            | false -> newValue |> int |> Some
-
-        let newOptions =
-            { state.Options with
-                  DaysToCalculate = value |> Option.defaultValue 0 }
-
-        { state with Options = newOptions }, Cmd.none
+    | FormChanged f ->
+        { state with
+              Options =
+                  state.Options
+                  |> ValidatedForm.updateWith f
+                  |> ValidatedForm.validateWith validateOptions },
+        Cmd.none

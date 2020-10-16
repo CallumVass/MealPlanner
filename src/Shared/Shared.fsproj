@@ -2,9 +2,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Types.fs" />
     <Compile Include="Validation.fs" />
+    <Compile Include="Home/Validation.fs" />
   </ItemGroup>
 </Project>

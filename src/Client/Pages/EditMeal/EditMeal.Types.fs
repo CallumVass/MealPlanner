@@ -6,6 +6,9 @@ open Form
 
 type State =
     { MealId: Guid
-      Meal: Deferred<Meal option> }
+      Meal: Deferred<ValidatedForm<Meal> option> }
 
-type Msg = GetMeal of AsyncOperationStatus<Meal option>
+type Msg =
+    | GetMeal of AsyncOperationStatus<Meal option>
+    | FormChanged of Meal
+    | Save of Meal
