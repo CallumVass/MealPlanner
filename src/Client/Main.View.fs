@@ -25,13 +25,14 @@ let private renderHeader state =
     let links = renderLinks state
 
     Html.div [ prop.className
-                   "bg-gradient-to-br from-purple-400 to-purple-700 flex p-4 mb-6 justify-between items-center"
+                   "bg-gradient-to-br from-purple-400 to-purple-700 flex p-4 mb-4 justify-between items-center"
                prop.children [ h1; links ] ]
 
 let private renderLoginButton =
     Html.div [ prop.className "w-full"
-               prop.children [ Html.div [ prop.className "ml-6"
-                                          prop.children (ViewHelpers.buttonLink "Login with Google" "/login") ] ] ]
+               prop.children
+                   [ Html.div [ prop.className "ml-2"
+                                prop.children (ViewHelpers.buttonLink "Login with Google" "/login") ] ] ]
 
 let private renderCurrentState activePage state =
     match state.User with
@@ -43,6 +44,7 @@ let render (state: State) (dispatch: Msg -> unit) =
         match state.CurrentUrl with
         | [] -> Home.View.render ()
         | [ "meals"; Route.Guid mealId; "edit" ] -> EditMeal.View.render ({ MealId = mealId })
+        | [ "rules"; "new" ] -> NewRule.View.render ()
         | _ -> Home.View.render ()
 
     let body =
