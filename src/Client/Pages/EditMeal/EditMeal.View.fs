@@ -11,46 +11,46 @@ open Shared.Types
 
 type EditMealProps = { MealId: Guid }
 
-let private renderMeal dispatch (meal: ValidatedForm<Meal> option) =
+let renderMeal dispatch meal =
+    let input =
+        FormHelpers.textInput "Name" (nameof meal.FormData.Name) meal.FormData.Name meal.ValidationErrors (fun x ->
+            { meal.FormData with Name = x }
+            |> FormChanged
+            |> dispatch)
 
-    match meal with
-    | Some m ->
+    let form =
+        Html.div [ prop.className "flex pb-2"
+                   prop.children input ]
 
-        let form =
-            Html.div [ prop.className "flex pb-2"
-                       prop.children
-                           [ ViewHelpers.textInput "Name" (nameof m.FormData.Name) m.FormData.Name m.ValidationErrors (fun x ->
-                                 { m.FormData with Name = x }
-                                 |> FormChanged
-                                 |> dispatch) ] ]
+    let editMealButton =
+        ViewHelpers.button (not meal.ValidationErrors.IsEmpty) "Save" (fun _ -> (Save meal.FormData) |> dispatch)
 
-        let editMealButton =
-            ViewHelpers.button (not m.ValidationErrors.IsEmpty) "Save" (fun _ -> (Save m.FormData) |> dispatch)
+    let formContainer =
+        ViewHelpers.box [ (ViewHelpers.h2 "Meals")
+                          form
+                          editMealButton ]
 
-        Html.div [ prop.className "w-full px-2 mb-2"
-                   prop.children
-                       (ViewHelpers.box [ (ViewHelpers.h2 "Meals")
-                                          form
-                                          editMealButton ]) ]
-    | None -> Html.none
+    Html.div [ prop.className "w-full mb-2"
+               prop.children formContainer ]
 
-let private renderMainBody state dispatch =
+let private maybeRenderMeal dispatch (meal: ValidatedForm<Meal> option) =
+    meal
+    |> Option.map (renderMeal dispatch)
+    |> Option.defaultValue Html.none
+
+let private renderMainBody dispatch state =
     match state.Meal with
-    | Resolved meal -> meal |> renderMeal dispatch
+    | Resolved meal -> meal |> maybeRenderMeal dispatch
     | _ -> Html.none
-
-let private renderBody state dispatch =
-    Html.div [ prop.className "px-2"
-               prop.children
-                   [ Html.div [ prop.className "flex flex-wrap"
-                                prop.children (renderMainBody state dispatch) ] ] ]
 
 let private view =
     fun (props: EditMealProps) ->
         let state, dispatch =
             React.useElmish (init props.MealId, update, [| box props.MealId |])
 
-        renderBody state dispatch
+        let children = [ (state |> renderMainBody dispatch) ]
+
+        children |> ViewHelpers.renderBody
 
 let render =
     React.functionComponent ("EditMeal", view)

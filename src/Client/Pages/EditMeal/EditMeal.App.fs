@@ -11,15 +11,18 @@ let defaultState mealId =
 let init mealId =
     defaultState mealId, Cmd.ofMsg (GetMeal Started)
 
-let private resolveForm fn f state =
+let private resolveForm fn state f =
     let form = f |> fn
     { state with
           Meal = Resolved(Some form) }
 
 let private updateResolvedMealState meal fn state =
-    match meal with
-    | Some meal -> state |> resolveForm fn meal, Cmd.none
-    | None -> { state with Meal = Resolved None }, Cmd.none
+    let updatedState =
+        meal
+        |> Option.map (resolveForm fn state)
+        |> Option.defaultValue { state with Meal = Resolved None }
+
+    updatedState, Cmd.none
 
 let update msg state =
     match msg with

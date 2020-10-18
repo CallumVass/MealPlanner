@@ -24,14 +24,14 @@ let tryParseInt (s: string) d =
 let private renderMainBody state dispatch =
     let form =
         Html.div [ prop.className "flex pb-2"
-                   prop.children [ ViewHelpers.numberInput "Days Between Same Meal"
+                   prop.children [ FormHelpers.numberInput "Days Between Same Meal"
                                        (nameof state.Options.FormData.DaysBetweenSameMeal)
                                        state.Options.FormData.DaysBetweenSameMeal state.Options.ValidationErrors (fun x ->
                                        { state.Options.FormData with
                                              DaysBetweenSameMeal = tryParseInt x 0 }
                                        |> FormChanged
                                        |> dispatch)
-                                   ViewHelpers.numberInput "Days To Calculate"
+                                   FormHelpers.numberInput "Days To Calculate"
                                        (nameof state.Options.FormData.DaysToCalculate)
                                        state.Options.FormData.DaysToCalculate state.Options.ValidationErrors (fun x ->
                                        { state.Options.FormData with
@@ -56,7 +56,7 @@ let private renderMainBody state dispatch =
                  || not state.Options.ValidationErrors.IsEmpty) "Create Meal Plan" (fun _ -> Calculate |> dispatch)
         | _ -> ViewHelpers.button true "Create Meal Plan" (fun _ -> Calculate |> dispatch)
 
-    Html.div [ prop.className "w-full sm:w-full md:w-3/5 px-2 mb-2"
+    Html.div [ prop.className "w-full sm:w-full md:w-3/5 pr-2 mb-2"
                prop.children [ (ViewHelpers.box [ ViewHelpers.h2 "Meals"
                                                   form
                                                   createMealPlanButton ])
@@ -84,24 +84,19 @@ let private renderMealList availableMeals =
                               Html.li [ prop.className "p-4 border-b"
                                         prop.children (renderMealItem meal) ] ] ]
 
-        Html.div [ prop.className "w-full sm:w-full md:w-2/5 px-2 mb-2"
+        Html.div [ prop.className "w-full sm:w-full md:w-2/5 pl-2 mb-2"
                    prop.children
                        (ViewHelpers.box [ ViewHelpers.h2 "Available Meals"
                                           mealList ]) ]
 
-let private renderBody state dispatch =
-    let children =
-        [ renderMainBody state dispatch
-          renderMealList state.AvailableMeals ]
-
-    Html.div [ prop.className "px-2"
-               prop.children
-                   [ Html.div [ prop.className "flex flex-wrap"
-                                prop.children children ] ] ]
-
 let private view =
     fun () ->
         let state, dispatch = React.useElmish (init, update, [||])
-        renderBody state dispatch
+
+        let children =
+            [ renderMainBody state dispatch
+              renderMealList state.AvailableMeals ]
+
+        children |> ViewHelpers.renderBody
 
 let render = React.functionComponent ("Index", view)
