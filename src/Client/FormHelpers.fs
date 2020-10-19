@@ -55,9 +55,9 @@ let numberInput (labelText: string) (for': string) (inputValue: int) validationE
 
 let checkboxInput (labelText: string) (for': string) (inputValue: bool) validationErrors (onChange: bool -> unit) =
     Html.label [ prop.className labelClasses
-                 prop.htmlFor for'
+                 prop.htmlFor labelText
                  prop.children [ Html.input [ prop.className ("mr-2 leading-tight" + color validationErrors for')
-                                              prop.id for'
+                                              prop.id labelText
                                               prop.type' "checkbox"
                                               prop.valueOrDefault inputValue
                                               prop.onChange onChange ]
