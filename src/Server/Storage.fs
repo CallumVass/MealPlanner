@@ -98,7 +98,7 @@ let private insertRuleDays connection applicableOn ruleId =
         return ()
     }
 
-let private insertMealRule connection mealId (rule: Rule) =
+let private insertMealRule connection (mealId: Guid) (rule: Rule) =
     let sql = """
     INSERT INTO MealRules (MealId, RuleId)
     VALUES (@mealId, @ruleId)
