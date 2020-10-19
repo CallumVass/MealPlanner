@@ -29,8 +29,7 @@ type private MealRuleEntity =
       Name: string
       DayOfWeek: string }
 
-let private toDayOfWeek mealRule =
-    Enum.Parse<DayOfWeek>(mealRule.DayOfWeek)
+let private toDayOfWeek dayOfWeek = Enum.Parse<DayOfWeek>(dayOfWeek)
 
 let private toDayOfWeekString dayOfWeek =
     Enum.GetName(typeof<DayOfWeek>, dayOfWeek)
@@ -40,7 +39,11 @@ let private toRule mealRule =
 
     { Id = id
       Name = name
-      ApplicableOn = mealRules |> Seq.map toDayOfWeek |> List.ofSeq }
+      ApplicableOn =
+          mealRules
+          |> Seq.map (fun m -> m.DayOfWeek)
+          |> Seq.map toDayOfWeek
+          |> List.ofSeq }
 
 let private toRules mealRules =
     mealRules
@@ -66,7 +69,7 @@ let private getRulesForMeal connection (meal: MealEntity) =
         return result |> (toDomain meal)
     }
 
-let private insertRuleDay connection ruleId dayOfWeek =
+let private insertRuleDay connection (ruleId: Guid) dayOfWeek =
     let sql = """
     INSERT INTO RuleRuleDays (RuleId, DayOfWeek)
     VALUES (@ruleId, @dayOfWeek)
@@ -199,6 +202,22 @@ let private getRules connectionString userId =
         return result |> toRules |> List.ofSeq
     }
 
+let getDaysOfWeek connectionString =
+    let sql = """
+    SELECT DayOfWeek
+        FROM RuleDays
+    """
+
+    async {
+        use! connection = getConnection connectionString
+        let! result = query connection sql None
+
+        return result
+               |> Seq.map toDayOfWeek
+               |> Seq.sort
+               |> List.ofSeq
+    }
+
 type MealStorage(config: IConfiguration) =
     let connectionString =
         config.GetConnectionString("MealPlanner")
@@ -213,3 +232,5 @@ type MealStorage(config: IConfiguration) =
     member __.GetRules userId = userId |> getRules connectionString
 
     member __.AddRule rule userId = userId |> addRule connectionString rule
+
+    member __.GetDaysOfWeek = connectionString |> getDaysOfWeek

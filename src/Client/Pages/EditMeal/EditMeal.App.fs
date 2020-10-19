@@ -16,9 +16,9 @@ let private resolveForm fn state f =
     { state with
           Meal = Resolved(Some form) }
 
-let private updateResolvedMealState meal fn state =
+let private updateResolvedState model fn state =
     let updatedState =
-        meal
+        model
         |> Option.map (resolveForm fn state)
         |> Option.defaultValue { state with Meal = Resolved None }
 
@@ -36,12 +36,12 @@ let update msg state =
         { state with Meal = InProgress }, Cmd.fromAsync loadMeal
     | GetMeal (Finished meal) ->
         state
-        |> updateResolvedMealState meal ValidatedForm.init
+        |> updateResolvedState meal ValidatedForm.init
     | FormChanged f ->
         match state.Meal with
         | Resolved m ->
             state
-            |> updateResolvedMealState m (f |> ValidatedForm.updateWith)
+            |> updateResolvedState m (f |> ValidatedForm.updateWith)
         | _ -> state, Cmd.none
     | Save meal ->
         printfn "%A" meal

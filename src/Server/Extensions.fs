@@ -12,7 +12,7 @@ open Microsoft.Extensions.Configuration
 
 [<RequireQualifiedAccess>]
 module Seq =
-    let inline asyncMap fn v = v |> Seq.map (fn) |> Async.Parallel
+    let inline asyncMap fn v = v |> Seq.map (fn) |> Async.Sequential
 
 [<RequireQualifiedAccess>]
 module Option =

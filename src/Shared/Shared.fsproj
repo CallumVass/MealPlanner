@@ -8,5 +8,6 @@
     <Compile Include="Types.fs" />
     <Compile Include="Validation.fs" />
     <Compile Include="Home/Validation.fs" />
+    <Compile Include="Rule/Validation.fs" />
   </ItemGroup>
 </Project>

@@ -20,7 +20,9 @@ let private renderLinks state =
 let private renderHeader state =
     let h1 =
         Html.h1 [ prop.className "text-3xl font-semibold text-white"
-                  prop.text "Meal Planner" ]
+                  prop.children
+                      [ Html.a [ prop.text "Meal Planner"
+                                 prop.href (Router.format ("")) ] ] ]
 
     let links = renderLinks state
 

@@ -29,7 +29,6 @@ let button isDisabled (text: string) onClick =
                                    prop.disabled isDisabled
                                    prop.onClick onClick ] ] ]
 
-
 let h2 (text: string) =
     Html.h2 [ prop.className
                   "bg-gradient-to-br from-purple-400 to-purple-700 flex p-2 mb-2 text-xl font-semibold text-white"
@@ -38,7 +37,6 @@ let h2 (text: string) =
 let box (children: ReactElement seq) =
     Html.div [ prop.className "bg-white rounded-b pb-3"
                prop.children children ]
-
 
 let renderBody (children: ReactElement seq) =
     Html.div [ prop.className "flex flex-wrap mx-4"
