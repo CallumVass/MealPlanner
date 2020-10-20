@@ -26,6 +26,7 @@ type IMealApi =
     { GetMeals: unit -> Async<Meal list>
       GetMeal: Guid -> Async<Meal option>
       AddMeal: Meal -> Async<unit>
+      EditMeal: Meal -> Async<unit>
       GetRules: unit -> Async<Rule list>
       AddRule: Rule -> Async<unit>
       GetDaysOfWeek: unit -> Async<DayOfWeek list> }

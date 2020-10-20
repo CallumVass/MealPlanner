@@ -9,8 +9,8 @@ let private linkContainer (link: ReactElement) =
                 prop.children link ]
 
 let private links =
-    [ linkContainer (ViewHelpers.buttonLink "Add Meal" (Router.format ("meals", "new")))
-      linkContainer (ViewHelpers.buttonLink "Add Rule" (Router.format ("rules", "new"))) ]
+    [ linkContainer (View.buttonLink "Add Meal" (Router.format ("meals", "new")))
+      linkContainer (View.buttonLink "Add Rule" (Router.format ("rules", "new"))) ]
 
 let private renderLinks state =
     match state.User with
@@ -34,7 +34,7 @@ let private renderLoginButton =
     Html.div [ prop.className "w-full"
                prop.children
                    [ Html.div [ prop.className "ml-2"
-                                prop.children (ViewHelpers.buttonLink "Login with Google" "/login") ] ] ]
+                                prop.children (View.buttonLink "Login with Google" "/login") ] ] ]
 
 let private renderCurrentState activePage state =
     match state.User with

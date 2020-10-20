@@ -28,7 +28,7 @@ let private renderDay state dispatch (day: DayOfWeek) =
         { state.Rule.FormData with
               ApplicableOn = newDays }
 
-    FormHelpers.checkboxInput dayString (nameof state.Rule.FormData.ApplicableOn) value state.Rule.ValidationErrors (fun (x: bool) ->
+    Form.checkboxInput dayString (nameof state.Rule.FormData.ApplicableOn) value state.Rule.ValidationErrors (fun (x: bool) ->
         (applyChange x day state)
         |> FormChanged
         |> dispatch)
@@ -45,8 +45,7 @@ let private renderDaysOfWeek state dispatch =
 let private renderForm state dispatch =
 
     let inputs =
-        [ FormHelpers.textInput "Name" (nameof state.Rule.FormData.Name) state.Rule.FormData.Name
-              state.Rule.ValidationErrors (fun x ->
+        [ Form.textInput "Name" (nameof state.Rule.FormData.Name) state.Rule.FormData.Name state.Rule.ValidationErrors (fun x ->
               { state.Rule.FormData with Name = x }
               |> FormChanged
               |> dispatch)
@@ -57,13 +56,13 @@ let private renderForm state dispatch =
                    prop.children inputs ]
 
     let createRuleButton =
-        ViewHelpers.button (not state.Rule.ValidationErrors.IsEmpty) "Create Rule" (fun _ -> TrySave |> dispatch)
+        View.button (not state.Rule.ValidationErrors.IsEmpty) "Create Rule" (fun _ -> TrySave |> dispatch)
 
     Html.div [ prop.className "w-full mb-2"
                prop.children
-                   [ (ViewHelpers.box [ ViewHelpers.h2 "New Rule"
-                                        form
-                                        createRuleButton ]) ] ]
+                   [ (View.box [ View.h2 "New Rule"
+                                 form
+                                 createRuleButton ]) ] ]
 
 let private view =
     fun () ->
@@ -71,7 +70,7 @@ let private view =
 
         let children = [ renderForm state dispatch ]
 
-        children |> ViewHelpers.renderBody
+        children |> View.renderBody
 
 let render =
     React.functionComponent ("EditMeal", view)

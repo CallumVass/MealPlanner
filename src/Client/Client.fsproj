@@ -9,9 +9,9 @@
     <ItemGroup>
         <None Include="index.html"/>
         <None Include="paket.references"/>
-        <Compile Include="FormHelpers.fs"/>
+        <Compile Include="Helpers/ViewHelpers.fs"/>
+        <Compile Include="Helpers/FormHelpers.fs"/>
         <Compile Include="Form.fs"/>
-        <Compile Include="ViewHelpers.fs"/>
         <Compile Include="Extensions.fs"/>
         <Compile Include="Api.fs"/>
         <Compile Include="Pages/Home/Home.Types.fs"/>
@@ -21,9 +21,12 @@
         <Compile Include="Pages/EditMeal/EditMeal.Types.fs"/>
         <Compile Include="Pages/EditMeal/EditMeal.App.fs"/>
         <Compile Include="Pages/EditMeal/EditMeal.View.fs"/>
-        <Compile Include="Pages\NewRule\NewRule.Types.fs"/>
-        <Compile Include="Pages\NewRule\NewRule.App.fs"/>
-        <Compile Include="Pages\NewRule\NewRule.View.fs"/>
+        <Compile Include="Pages/NewRule/NewRule.Types.fs"/>
+        <Compile Include="Pages/NewRule/NewRule.App.fs"/>
+        <Compile Include="Pages/NewRule/NewRule.View.fs"/>
+        <Compile Include="Pages/NewMeal/NewMeal.Types.fs"/>
+        <Compile Include="Pages/NewMeal/NewMeal.App.fs"/>
+        <Compile Include="Pages/NewMeal/NewMeal.View.fs"/>
         <Compile Include="Main.Types.fs"/>
         <Compile Include="Main.Logic.fs"/>
         <Compile Include="Main.App.fs"/>

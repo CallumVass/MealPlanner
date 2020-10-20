@@ -2,7 +2,7 @@ module NewRule.Types
 
 open System
 open Shared.Types
-open Form
+open Form.Types
 
 type State =
     { Rule: ValidatedForm<Rule>

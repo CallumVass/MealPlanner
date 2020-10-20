@@ -1,7 +1,7 @@
 module Home.Types
 
 open Shared.Types
-open Form
+open Form.Types
 
 type State =
     { Options: ValidatedForm<MealOptions>

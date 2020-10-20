@@ -2,14 +2,22 @@ module EditMeal.App
 
 open Elmish
 open EditMeal.Types
-open Form
+open Form.Types
+open Shared.Meal.Validation
+open Feliz.Router
 
 let defaultState mealId =
     { MealId = mealId
-      Meal = HasNotStartedYet }
+      Meal = HasNotStartedYet
+      Rules = HasNotStartedYet }
 
 let init mealId =
-    defaultState mealId, Cmd.ofMsg (GetMeal Started)
+
+    let messages =
+        [ Cmd.ofMsg (GetMeal Started)
+          Cmd.ofMsg (GetRules Started) ]
+
+    defaultState mealId, Cmd.batch messages
 
 let private resolveForm fn state f =
     let form = f |> fn
@@ -26,6 +34,15 @@ let private updateResolvedState model fn state =
 
 let update msg state =
     match msg with
+    | GetRules Started ->
+        let loadRules =
+            async {
+                let! rules = Api.mealApi.GetRules()
+                return GetRules(Finished rules)
+            }
+
+        { state with Rules = InProgress }, Cmd.fromAsync loadRules
+    | GetRules (Finished rules) -> { state with Rules = Resolved rules }, Cmd.none
     | GetMeal Started ->
         let loadMeal =
             async {
@@ -43,7 +60,21 @@ let update msg state =
             state
             |> updateResolvedState m (f |> ValidatedForm.updateWith)
         | _ -> state, Cmd.none
-    | Save meal ->
-        printfn "%A" meal
+    | TrySave meal ->
+        let validatedMeal =
+            meal |> ValidatedForm.validateWith validateMeal
 
-        state, Cmd.none
+        let newState =
+            { state with
+                  Meal = Resolved(Some validatedMeal) }
+
+        if validatedMeal.ValidationErrors.IsEmpty then newState, Cmd.ofMsg (Save validatedMeal) else newState, Cmd.none
+    | FormSaved -> state, Cmd.navigate ("")
+    | Save meal ->
+        let saveForm =
+            async {
+                let! _ = Api.mealApi.EditMeal meal.FormData
+                return FormSaved
+            }
+
+        state, Cmd.fromAsync saveForm

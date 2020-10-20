@@ -24,15 +24,14 @@ let tryParseInt (s: string) d =
 let private renderMainBody state dispatch =
     let form =
         Html.div [ prop.className "flex pb-2"
-                   prop.children [ FormHelpers.numberInput "Days Between Same Meal"
+                   prop.children [ Form.numberInput "Days Between Same Meal"
                                        (nameof state.Options.FormData.DaysBetweenSameMeal)
                                        state.Options.FormData.DaysBetweenSameMeal state.Options.ValidationErrors (fun x ->
                                        { state.Options.FormData with
                                              DaysBetweenSameMeal = tryParseInt x 0 }
                                        |> FormChanged
                                        |> dispatch)
-                                   FormHelpers.numberInput "Days To Calculate"
-                                       (nameof state.Options.FormData.DaysToCalculate)
+                                   Form.numberInput "Days To Calculate" (nameof state.Options.FormData.DaysToCalculate)
                                        state.Options.FormData.DaysToCalculate state.Options.ValidationErrors (fun x ->
                                        { state.Options.FormData with
                                              DaysToCalculate = tryParseInt x 0 }
@@ -45,27 +44,27 @@ let private renderMainBody state dispatch =
         else
             Html.div [ prop.className "mt-2"
                        prop.children
-                           (ViewHelpers.box [ ViewHelpers.h2 "Meal Plan"
-                                              renderCalculatedMeals state.ChosenMeals ]) ]
+                           (View.box [ View.h2 "Meal Plan"
+                                       renderCalculatedMeals state.ChosenMeals ]) ]
 
     let createMealPlanButton =
         match state.AvailableMeals with
         | Resolved meals ->
-            ViewHelpers.button
+            View.button
                 (meals.IsEmpty
                  || not state.Options.ValidationErrors.IsEmpty) "Create Meal Plan" (fun _ -> Calculate |> dispatch)
-        | _ -> ViewHelpers.button true "Create Meal Plan" (fun _ -> Calculate |> dispatch)
+        | _ -> View.button true "Create Meal Plan" (fun _ -> Calculate |> dispatch)
 
     Html.div [ prop.className "w-full sm:w-full md:w-3/5 pr-2 mb-2"
-               prop.children [ (ViewHelpers.box [ ViewHelpers.h2 "Meals"
-                                                  form
-                                                  createMealPlanButton ])
+               prop.children [ (View.box [ View.h2 "Meals"
+                                           form
+                                           createMealPlanButton ])
                                mealPlan ] ]
 
 let private renderMealItem meal =
 
     let actions =
-        Html.div [ ViewHelpers.buttonLink "Edit" (Router.format ("meals", (sprintf "%A" meal.Id), "edit")) ]
+        Html.div [ View.buttonLink "Edit" (Router.format ("meals", (sprintf "%A" meal.Id), "edit")) ]
 
     Html.div [ prop.className "flex justify-between items-center"
                prop.children [ Html.text meal.Name
@@ -86,8 +85,8 @@ let private renderMealList availableMeals =
 
         Html.div [ prop.className "w-full sm:w-full md:w-2/5 pl-2 mb-2"
                    prop.children
-                       (ViewHelpers.box [ ViewHelpers.h2 "Available Meals"
-                                          mealList ]) ]
+                       (View.box [ View.h2 "Available Meals"
+                                   mealList ]) ]
 
 let private view =
     fun () ->
@@ -97,6 +96,6 @@ let private view =
             [ renderMainBody state dispatch
               renderMealList state.AvailableMeals ]
 
-        children |> ViewHelpers.renderBody
+        children |> View.renderBody
 
 let render = React.functionComponent ("Index", view)

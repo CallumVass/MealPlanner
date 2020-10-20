@@ -5,7 +5,7 @@ open Elmish
 open NewRule.Types
 open Shared.Types
 open Shared.Rule.Validation
-open Form
+open Form.Types
 open Feliz.Router
 
 let defaultRule =

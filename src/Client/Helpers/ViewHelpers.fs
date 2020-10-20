@@ -1,5 +1,5 @@
 [<RequireQualifiedAccess>]
-module ViewHelpers
+module View
 
 open Feliz
 

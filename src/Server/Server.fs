@@ -20,6 +20,7 @@ let mealApi userId (storage: MealStorage) =
     { GetMeals = fun () -> userId |> storage.GetMeals
       GetMeal = fun mealId -> userId |> storage.GetMeal mealId
       AddMeal = fun meal -> userId |> storage.AddMeal meal
+      EditMeal = fun meal -> userId |> storage.EditMeal meal
       GetRules = fun () -> userId |> storage.GetRules
       AddRule = fun rule -> userId |> storage.AddRule rule
       GetDaysOfWeek = fun () -> storage.GetDaysOfWeek }

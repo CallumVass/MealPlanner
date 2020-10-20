@@ -5,7 +5,7 @@ open Home.Types
 open Shared.Types
 open Api
 open Home.Logic
-open Form
+open Form.Types
 open Shared.Home.Validation
 
 let defaultOptions =

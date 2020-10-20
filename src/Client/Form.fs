@@ -1,12 +1,11 @@
-module Form
+module Form.Types
 
 open Shared.Validation
 
 type ValidatedForm<'a> =
     { ValidationErrors: ValidationError list
       FormData: 'a
-      IsLoading: bool
-      WasSent: bool }
+      IsLoading: bool }
 
 module ValidatedForm =
     let updateWith f form = { form with FormData = f }
@@ -21,16 +20,11 @@ module ValidatedForm =
         { form with
               ValidationErrors = validFn form.FormData }
 
-    let validateWithIfSent validFn form =
-        if form.WasSent then validateWith validFn form else form
-
     let isValid form = form.ValidationErrors.IsEmpty
     let startLoading form = { form with IsLoading = true }
     let stopLoading form = { form with IsLoading = false }
-    let markAsSent form = { form with WasSent = true }
 
     let init v =
         { FormData = v
           ValidationErrors = []
-          IsLoading = false
-          WasSent = false }
+          IsLoading = false }

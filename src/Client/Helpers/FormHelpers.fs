@@ -1,5 +1,5 @@
 [<RequireQualifiedAccess>]
-module FormHelpers
+module Form
 
 open Feliz
 open Shared.Validation
@@ -59,7 +59,7 @@ let checkboxInput (labelText: string) (for': string) (inputValue: bool) validati
                  prop.children [ Html.input [ prop.className ("mr-2 leading-tight" + color validationErrors for')
                                               prop.id labelText
                                               prop.type' "checkbox"
-                                              prop.valueOrDefault inputValue
+                                              prop.isChecked inputValue
                                               prop.onChange onChange ]
                                  Html.span [ prop.className "text-sm"
                                              prop.text labelText ]

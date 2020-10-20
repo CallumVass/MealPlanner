@@ -170,6 +170,40 @@ let addMeal connectionString (meal: Meal) userId =
         return ()
     }
 
+let editMealRules (meal: Meal) connection =
+    let sql = """
+    DELETE FROM MealRules WHERE MealId = @mealId
+    """
+
+    async {
+        let! _ = execute connection sql !{| mealId = meal.Id |}
+        let! _ = meal.Id |> insertMealRules connection meal.Rules
+
+        return ()
+    }
+
+let editMeal connectionString (meal: Meal) userId =
+
+    let sql = """
+    UPDATE Meals SET Name = @name WHERE Id = @id AND UserId = @userId
+    """
+
+    async {
+        use! connection = getConnection connectionString
+
+        let! _ =
+            execute
+                connection
+                sql
+                !{| name = meal.Name
+                    id = meal.Id
+                    userId = userId |}
+
+        let! _ = connection |> editMealRules meal
+
+        return ()
+    }
+
 let addRule connectionString (rule: Rule) userId =
     let sql = """
     INSERT INTO Rules (Name, UserId)
@@ -228,6 +262,8 @@ type MealStorage(config: IConfiguration) =
         userId |> getMeal connectionString mealId
 
     member __.AddMeal meal userId = userId |> addMeal connectionString meal
+
+    member __.EditMeal meal userId = userId |> editMeal connectionString meal
 
     member __.GetRules userId = userId |> getRules connectionString
 
