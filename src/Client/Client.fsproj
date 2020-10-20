@@ -9,9 +9,10 @@
     <ItemGroup>
         <None Include="index.html"/>
         <None Include="paket.references"/>
+        <Compile Include="Form.fs"/>
         <Compile Include="Helpers/ViewHelpers.fs"/>
         <Compile Include="Helpers/FormHelpers.fs"/>
-        <Compile Include="Form.fs"/>
+        <Compile Include="Helpers/MealHelpers.fs"/>
         <Compile Include="Extensions.fs"/>
         <Compile Include="Api.fs"/>
         <Compile Include="Pages/Home/Home.Types.fs"/>

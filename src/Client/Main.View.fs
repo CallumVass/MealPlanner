@@ -47,6 +47,7 @@ let render (state: State) (dispatch: Msg -> unit) =
         | [] -> Home.View.render ()
         | [ "meals"; Route.Guid mealId; "edit" ] -> EditMeal.View.render ({ MealId = mealId })
         | [ "rules"; "new" ] -> NewRule.View.render ()
+        | [ "meals"; "new" ] -> NewMeal.View.render ()
         | _ -> Home.View.render ()
 
     let body =

@@ -36,7 +36,10 @@ let update msg state =
         Cmd.none
     | FormChanged f ->
         { state with
-              Rule = state.Rule |> ValidatedForm.updateWith f },
+              Rule =
+                  state.Rule
+                  |> ValidatedForm.updateWith f
+                  |> ValidatedForm.validateWith validateRule },
         Cmd.none
     | FormSaved ->
         let newRule = { state.Rule with IsLoading = false }
