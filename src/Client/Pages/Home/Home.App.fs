@@ -38,9 +38,19 @@ let update msg state =
         Cmd.none
     | Calculate -> state |> calculate, Cmd.none
     | FormChanged f ->
-        { state with
-              Options =
-                  state.Options
-                  |> ValidatedForm.updateWith f
-                  |> ValidatedForm.validateWith validateOptions },
-        Cmd.none
+        let newState =
+            match state.AvailableMeals with
+            | Resolved meals ->
+                { state with
+                      Options =
+                          state.Options
+                          |> ValidatedForm.updateWith f
+                          |> ValidatedForm.validateWith (validateOptions meals.Length) }
+            | _ ->
+                { state with
+                      Options =
+                          state.Options
+                          |> ValidatedForm.updateWith f
+                          |> ValidatedForm.validateWith (validateOptions 1) }
+
+        newState, Cmd.none

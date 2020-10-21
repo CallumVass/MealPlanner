@@ -55,7 +55,7 @@ let private renderMainBody state dispatch =
                  || not state.Options.ValidationErrors.IsEmpty) "Create Meal Plan" (fun _ -> Calculate |> dispatch)
         | _ -> View.button true "Create Meal Plan" (fun _ -> Calculate |> dispatch)
 
-    Html.div [ prop.className "w-full sm:w-full md:w-3/5 pr-2 mb-2"
+    Html.div [ prop.className "w-full sm:w-full md:w-3/5 pr-0 md:pr-2 mb-4"
                prop.children [ (View.box [ View.h2 "Meals"
                                            form
                                            createMealPlanButton ])
@@ -83,7 +83,7 @@ let private renderMealList availableMeals =
                               Html.li [ prop.className "p-4 border-b"
                                         prop.children (renderMealItem meal) ] ] ]
 
-        Html.div [ prop.className "w-full sm:w-full md:w-2/5 pl-2 mb-2"
+        Html.div [ prop.className "w-full sm:w-full md:w-2/5 pl-0 md:pl-2 mb-4"
                    prop.children
                        (View.box [ View.h2 "Available Meals"
                                    mealList ]) ]
