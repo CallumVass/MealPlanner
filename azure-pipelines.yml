@@ -5,9 +5,9 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  ConnectionStrings.MealPlanner: $(MealPlannerConnectionString)
+  Google.ClientId: $(GoogleClientId)
+  Google.ClientSecret: $(GoogleClientSecret)
 
 steps:
 - task: CmdLine@2
@@ -26,8 +26,6 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true 
 
-
-
 - task: AzureRmWebAppDeployment@4
   inputs:
     ConnectionType: 'AzureRM'
@@ -35,3 +33,4 @@ steps:
     appType: 'webApp'
     WebAppName: 'meal-planner-cv'
     packageForLinux: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    JSONFiles: '**/appsettings.json'
