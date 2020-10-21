@@ -1,0 +1,37 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: CmdLine@2
+  inputs:
+    script: 'dotnet tool restore'
+
+- task: CmdLine@2
+  inputs:
+    script: 'dotnet fake build -t bundle'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: 'deploy'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true 
+
+
+
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Pay-As-You-Go(841697c3-4e0b-4018-b484-b1a79707f9be)'
+    appType: 'webApp'
+    WebAppName: 'meal-planner-cv'
+    packageForLinux: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
