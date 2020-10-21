@@ -29,7 +29,6 @@ steps:
 - task: AzureRmWebAppDeployment@4
   inputs:
     ConnectionType: 'AzureRM'
-    azureSubscription: 'Pay-As-You-Go(841697c3-4e0b-4018-b484-b1a79707f9be)'
     appType: 'webApp'
     WebAppName: 'meal-planner-cv'
-    packageForLinux: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
