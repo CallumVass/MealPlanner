@@ -77,7 +77,7 @@ let configureHost (hostBuilder: IHostBuilder) =
 
     hostBuilder.ConfigureAppConfiguration(fun ctx builder ->
         builder.AddJsonFile("appSettings.json") |> ignore
-        builder.AddJsonFile(sprintf "appSettings.%s.json" ctx.HostingEnvironment.EnvironmentName)
+        builder.AddJsonFile((sprintf "appSettings.%s.json" ctx.HostingEnvironment.EnvironmentName), true)
         |> ignore)
 
 let configureServices (serviceCollection: IServiceCollection) =
