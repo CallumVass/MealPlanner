@@ -4,7 +4,7 @@ module View
 open Feliz
 
 let baseClasses =
-    "bg-green-500 text-white font-bold py-2 px-4 rounded"
+    "block bg-green-500 text-white font-bold py-2 px-4 rounded"
 
 let nonDisabledClasses =
     "hover:bg-green-700 focus:outline-none focus:shadow-outline"

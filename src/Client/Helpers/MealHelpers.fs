@@ -53,7 +53,7 @@ let render dispatch rules formChangeMsg formSaveMsg meal =
           meal |> renderRules rules dispatch formChangeMsg ]
 
     let form =
-        Html.div [ prop.className "flex pb-2"
+        Html.div [ prop.className "flex flex-wrap pb-2"
                    prop.children inputs ]
 
     let editMealButton =

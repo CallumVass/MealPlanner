@@ -23,7 +23,7 @@ let tryParseInt (s: string) d =
 
 let private renderMainBody state dispatch =
     let form =
-        Html.div [ prop.className "flex pb-2"
+        Html.div [ prop.className "flex flex-wrap pb-2"
                    prop.children [ Form.numberInput "Days Between Same Meal"
                                        (nameof state.Options.FormData.DaysBetweenSameMeal)
                                        state.Options.FormData.DaysBetweenSameMeal state.Options.ValidationErrors (fun x ->

@@ -52,7 +52,7 @@ let private renderForm state dispatch =
           renderDaysOfWeek state dispatch ]
 
     let form =
-        Html.div [ prop.className "flex pb-2"
+        Html.div [ prop.className "flex flex-wrap pb-2"
                    prop.children inputs ]
 
     let createRuleButton =

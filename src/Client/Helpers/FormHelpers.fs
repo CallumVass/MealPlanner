@@ -22,13 +22,12 @@ let private labelClasses =
     "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
 
 let private formInput (labelText: string) for' validationErrors input =
-    Html.div [ prop.className "w-1/2 px-3"
+    Html.div [ prop.className "w-full md:w-1/2 px-3 mt-4 md:mt-0"
                prop.children [ Html.label [ prop.className labelClasses
                                             prop.htmlFor for'
                                             prop.text labelText ]
                                input
                                errorMessage validationErrors for' ] ]
-
 
 let private inputClasses =
     "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
