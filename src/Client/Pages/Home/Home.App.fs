@@ -1,5 +1,6 @@
 module Home.App
 
+open System
 open Elmish
 open Home.Types
 open Shared.Types
@@ -10,7 +11,8 @@ open Shared.Home.Validation
 
 let defaultOptions =
     { DaysBetweenSameMeal = 14
-      DaysToCalculate = 7 }
+      DaysToCalculate = 1
+      FromDate = DateTime.Now.AddDays(float 1).Date }
 
 let defaultState =
     { Options = defaultOptions |> ValidatedForm.init
@@ -33,8 +35,17 @@ let update msg state =
               AvailableMeals = InProgress },
         Cmd.fromAsync loadMeals
     | GetMeals (Finished meals) ->
+        let formData =
+            { state.Options.FormData with
+                  DaysToCalculate = Math.Min(meals.Length, 7) }
+
+        let options =
+            { state.Options with
+                  FormData = formData }
+
         { state with
-              AvailableMeals = Resolved meals },
+              AvailableMeals = Resolved meals
+              Options = options },
         Cmd.none
     | Calculate -> state |> calculate, Cmd.none
     | FormChanged f ->

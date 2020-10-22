@@ -36,15 +36,15 @@ let private getMeal currentMeals dayOfWeek daysBetweenSameMeal meals =
     filteredMeals
     |> List.item (rnd.Next filteredMeals.Length)
 
-let private createMeal currentMeals index daysBetweenSameMeal meals =
-    let date = DateTime.Now.Date.AddDays(float index)
+let private createMeal currentMeals index options meals =
+    let date = options.FromDate.AddDays(float index)
 
     let day =
         Enum.GetName(typeof<DayOfWeek>, date.DayOfWeek)
 
     let meal =
         meals
-        |> getMeal currentMeals date.DayOfWeek daysBetweenSameMeal
+        |> getMeal currentMeals date.DayOfWeek options.DaysBetweenSameMeal
 
     day, date.ToString("dd/MM/yyyy"), meal
 
@@ -55,12 +55,12 @@ let calculate state =
             state
         else
             let meals =
-                seq { for i in 1 .. state.Options.FormData.DaysToCalculate -> i }
+                seq { for i in 0 .. state.Options.FormData.DaysToCalculate -> i }
                 |> List.ofSeq
                 |> List.fold (fun currentMeals index ->
                     currentMeals
                     @ [ meals
-                        |> createMeal currentMeals index state.Options.FormData.DaysBetweenSameMeal ]) []
+                        |> createMeal currentMeals index state.Options.FormData ]) []
 
             { state with ChosenMeals = meals }
     | _ -> state

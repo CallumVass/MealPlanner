@@ -10,7 +10,20 @@ open Home.Types
 open Shared.Types
 
 let private renderMeal (day, date, meal) =
-    Html.div [ Html.p (sprintf "Day: %s Meal: %s" day meal.Name) ]
+    //    Html.div [ Html.p (sprintf "Day: %s Date: %s Meal: %s" day date meal.Name) ]
+
+    let buildChild (text: string) (value: string) =
+        Html.p
+            [ prop.className "border-b mb-2 pb-2"
+              prop.children [ Html.span [ prop.className "font-semibold"
+                                          prop.text text ]
+                              Html.text value ] ]
+
+
+    Html.div [ prop.className "grid grid-cols-3"
+               prop.children [ buildChild "Day:" (sprintf " %s" day)
+                               buildChild "Date:" (sprintf " %s" date)
+                               buildChild "Meal:" (sprintf " %s" meal.Name) ] ]
 
 let private renderCalculatedMeals dailyMeals =
     Html.div [ prop.className "p-2"
@@ -21,20 +34,40 @@ let tryParseInt (s: string) d =
     | true, int -> int
     | _ -> d
 
+let tryParseDate (s: string) d =
+    match DateTime.TryParse(s) with
+    | true, date -> date
+    | _ -> d
+
 let private renderMainBody state dispatch =
+
+    let maxNumberOfMeals =
+        match state.AvailableMeals with
+        | Resolved meals -> Some meals.Length
+        | _ -> Some 0
+
     let form =
         Html.div [ prop.className "flex flex-wrap pb-2"
                    prop.children [ Form.numberInput "Days Between Same Meal"
-                                       (nameof state.Options.FormData.DaysBetweenSameMeal)
+                                       (nameof state.Options.FormData.DaysBetweenSameMeal) None
                                        state.Options.FormData.DaysBetweenSameMeal state.Options.ValidationErrors (fun x ->
                                        { state.Options.FormData with
                                              DaysBetweenSameMeal = tryParseInt x 0 }
                                        |> FormChanged
                                        |> dispatch)
                                    Form.numberInput "Days To Calculate" (nameof state.Options.FormData.DaysToCalculate)
-                                       state.Options.FormData.DaysToCalculate state.Options.ValidationErrors (fun x ->
+                                       maxNumberOfMeals state.Options.FormData.DaysToCalculate
+                                       state.Options.ValidationErrors (fun x ->
                                        { state.Options.FormData with
                                              DaysToCalculate = tryParseInt x 0 }
+                                       |> FormChanged
+                                       |> dispatch)
+                                   Form.dateInput "Start Date" (nameof state.Options.FormData.FromDate)
+                                       state.Options.FormData.FromDate state.Options.ValidationErrors (fun x ->
+                                       { state.Options.FormData with
+                                             FromDate =
+                                                 (DateTime.Now.AddDays(float 1).Date
+                                                  |> tryParseDate x) }
                                        |> FormChanged
                                        |> dispatch) ] ]
 

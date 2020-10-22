@@ -14,7 +14,8 @@ type Meal =
 
 type MealOptions =
     { DaysBetweenSameMeal: int
-      DaysToCalculate: int }
+      DaysToCalculate: int
+      FromDate: DateTime }
 
 module Route =
     let builder typeName methodName = sprintf "/api/%s/%s" typeName methodName

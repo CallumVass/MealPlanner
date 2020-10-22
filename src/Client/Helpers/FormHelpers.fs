@@ -1,6 +1,7 @@
 [<RequireQualifiedAccess>]
 module Form
 
+open System
 open Feliz
 open Shared.Validation
 
@@ -22,7 +23,7 @@ let errorMessage errors name =
     |> Option.defaultValue Html.none
 
 let private formInput (labelText: string) for' validationErrors input =
-    Html.div [ prop.className "w-full md:w-1/2 px-3 mt-4 md:mt-0"
+    Html.div [ prop.className "w-full md:w-1/2 px-3 mt-4"
                prop.children [ Html.label [ prop.className labelClasses
                                             prop.htmlFor for'
                                             prop.text labelText ]
@@ -42,13 +43,43 @@ let textInput (labelText: string) (for': string) (inputValue: string) validation
 
     input |> formInput labelText for' validationErrors
 
-let numberInput (labelText: string) (for': string) (inputValue: int) validationErrors (onChange: string -> unit) =
+let dateInput (labelText: string) (for': string) (inputValue: DateTime) validationErrors (onChange: string -> unit) =
+    let dateAsString = inputValue.ToString("yyyy-MM-dd")
+
+    let minDate =
+        DateTime.Now.AddDays(float 1).ToString("yyyy-MM-dd")
+
     let input =
         Html.input [ prop.className (inputClasses + color validationErrors for')
                      prop.id for'
-                     prop.type' "number"
-                     prop.valueOrDefault inputValue
+                     prop.type' "date"
+                     Interop.mkAttr "min" minDate
+                     prop.valueOrDefault dateAsString
                      prop.onChange onChange ]
+
+    input |> formInput labelText for' validationErrors
+
+let numberInput (labelText: string)
+                (for': string)
+                (maxValue: int option)
+                (inputValue: int)
+                validationErrors
+                (onChange: string -> unit)
+                =
+    let props =
+        [ prop.className (inputClasses + color validationErrors for')
+          prop.id for'
+          prop.type' "number"
+          prop.min 0
+          prop.valueOrDefault inputValue
+          prop.onChange onChange ]
+
+    let props =
+        match maxValue with
+        | Some n -> props @ [ prop.max n ]
+        | None -> props
+
+    let input = Html.input props
 
     input |> formInput labelText for' validationErrors
 

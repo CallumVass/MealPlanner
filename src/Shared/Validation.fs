@@ -18,6 +18,8 @@ type ValidationError =
     { Field: string
       Type: ValidationErrorType }
 
+let validateDateNotBefore minDate value = None
+
 let validateRange min max value =
     if value < min || value > max then IsOutOfRange(min, max) |> Some else None
 
