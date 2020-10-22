@@ -35,7 +35,7 @@ let private renderHeader state =
 let private renderLoginButton =
     Html.div [ prop.className "w-full"
                prop.children
-                   [ Html.div [ prop.className "ml-2"
+                   [ Html.div [ prop.className "mx-4"
                                 prop.children (View.buttonLink "Login with Google" "/login") ] ] ]
 
 let private renderCurrentState activePage state =

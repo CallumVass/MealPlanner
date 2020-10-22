@@ -28,14 +28,20 @@ let private renderDay state dispatch (day: DayOfWeek) =
         { state.Rule.FormData with
               ApplicableOn = newDays }
 
-    Form.checkboxInput dayString (nameof state.Rule.FormData.ApplicableOn) value state.Rule.ValidationErrors (fun (x: bool) ->
+    Form.checkboxInput dayString value (fun (x: bool) ->
         (applyChange x day state)
         |> FormChanged
         |> dispatch)
 
 let private renderDays state dispatch days =
+
+    let children =
+        (days |> List.map (renderDay state dispatch))
+
     Html.div [ prop.className "mt-6 px-3"
-               prop.children (days |> List.map (renderDay state dispatch)) ]
+               prop.children
+                   (children
+                    @ [ Form.errorMessage state.Rule.ValidationErrors (nameof state.Rule.FormData.ApplicableOn) ]) ]
 
 let private renderDaysOfWeek state dispatch =
     match state.DaysOfWeek with

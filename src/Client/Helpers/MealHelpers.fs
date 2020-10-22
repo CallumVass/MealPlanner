@@ -34,15 +34,20 @@ let private renderRule (meal: ValidatedForm<Meal>) dispatch msg (rule: Rule) =
         { meal.FormData with Rules = newRules }
 
     let checkbox =
-        Form.checkboxInput rule.Name (nameof meal.FormData.Rules) value meal.ValidationErrors (fun (x: bool) ->
-            (applyChange x rule meal) |> msg |> dispatch)
+        Form.checkboxInput rule.Name value (fun (x: bool) -> (applyChange x rule meal) |> msg |> dispatch)
 
     Html.div [ checkbox
                rule |> renderDays ]
 
 let private renderRules rules dispatch msg meal =
+
+    let children =
+        (rules |> List.map (renderRule meal dispatch msg))
+
     Html.div [ prop.className "mt-6 px-3"
-               prop.children (rules |> List.map (renderRule meal dispatch msg)) ]
+               prop.children
+                   (children
+                    @ [ Form.errorMessage meal.ValidationErrors (nameof meal.FormData.Rules) ]) ]
 
 let render dispatch rules formChangeMsg formSaveMsg meal =
     let inputs =

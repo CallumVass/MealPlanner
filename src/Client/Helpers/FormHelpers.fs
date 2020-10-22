@@ -4,14 +4,6 @@ module Form
 open Feliz
 open Shared.Validation
 
-let private errorMessage errors name =
-    errors
-    |> List.tryFind (fun x -> x.Field = name)
-    |> Option.map (fun x ->
-        Html.p [ prop.className "text-red-500 text-xs italic"
-                 prop.text (x.Type |> ValidationErrorType.toString) ])
-    |> Option.defaultValue Html.none
-
 let private color errors name =
     errors
     |> List.tryFind (fun x -> x.Field = name)
@@ -20,6 +12,14 @@ let private color errors name =
 
 let private labelClasses =
     "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+
+let errorMessage errors name =
+    errors
+    |> List.tryFind (fun x -> x.Field = name)
+    |> Option.map (fun x ->
+        Html.p [ prop.className "text-red-500 text-xs italic"
+                 prop.text (x.Type |> ValidationErrorType.toString) ])
+    |> Option.defaultValue Html.none
 
 let private formInput (labelText: string) for' validationErrors input =
     Html.div [ prop.className "w-full md:w-1/2 px-3 mt-4 md:mt-0"
@@ -52,14 +52,13 @@ let numberInput (labelText: string) (for': string) (inputValue: int) validationE
 
     input |> formInput labelText for' validationErrors
 
-let checkboxInput (labelText: string) (for': string) (inputValue: bool) validationErrors (onChange: bool -> unit) =
+let checkboxInput (labelText: string) (inputValue: bool) (onChange: bool -> unit) =
     Html.label [ prop.className labelClasses
                  prop.htmlFor labelText
-                 prop.children [ Html.input [ prop.className ("mr-2 leading-tight" + color validationErrors for')
+                 prop.children [ Html.input [ prop.className "mr-2 leading-tight"
                                               prop.id labelText
                                               prop.type' "checkbox"
                                               prop.isChecked inputValue
                                               prop.onChange onChange ]
                                  Html.span [ prop.className "text-sm"
-                                             prop.text labelText ]
-                                 errorMessage validationErrors for' ] ]
+                                             prop.text labelText ] ] ]
