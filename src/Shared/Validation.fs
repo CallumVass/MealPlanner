@@ -6,6 +6,7 @@ type ValidationErrorType =
     | IsEmpty
     | ListIsEmpty
     | IsOutOfRange of int * int
+    | IsBeforeDate of DateTime * DateTime
 
 module ValidationErrorType =
     let toString =
@@ -13,12 +14,16 @@ module ValidationErrorType =
         | IsEmpty -> "The value is required"
         | ListIsEmpty -> "The list must contain at least 1 value"
         | IsOutOfRange (min, max) -> sprintf "The value must be between %i and %i" min max
+        | IsBeforeDate (minDate, value) ->
+            let formatDate (date: DateTime) = date.ToString("dd/MM/yyyy")
+            sprintf "The date %s should not be before %s" (formatDate value) (formatDate minDate)
 
 type ValidationError =
     { Field: string
       Type: ValidationErrorType }
 
-let validateDateNotBefore minDate value = None
+let validateDateNotBefore (minDate: DateTime) (value: DateTime) =
+    if value.Date > minDate.Date then None else IsBeforeDate(minDate, value) |> Some
 
 let validateRange min max value =
     if value < min || value > max then IsOutOfRange(min, max) |> Some else None
