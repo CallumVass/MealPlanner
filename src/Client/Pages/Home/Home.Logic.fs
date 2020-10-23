@@ -16,7 +16,7 @@ let private filterByHaveHadMealRecently currentMeals daysBetweenSameMeal meal =
     let filterMeal meal m =
         match m with
         | Some m -> m = meal
-        | None -> true
+        | None -> false
 
     currentMeals
     |> List.rev
@@ -61,7 +61,7 @@ let calculate state =
             state
         else
             let meals =
-                seq { for i in 0 .. state.Options.FormData.DaysToCalculate -> i }
+                seq { for i in 0 .. (state.Options.FormData.DaysToCalculate - 1) -> i }
                 |> List.ofSeq
                 |> List.fold (fun currentMeals index ->
                     currentMeals

@@ -4,8 +4,8 @@ open System
 open Shared.Validation
 open Shared.Types
 
-let validateOptions mealCount (o: MealOptions) =
-    [ (nameof o.DaysBetweenSameMeal), (validateRange 0 mealCount o.DaysBetweenSameMeal)
-      (nameof o.DaysToCalculate), (validateRange 1 mealCount o.DaysToCalculate)
+let validateOptions (o: MealOptions) =
+    [ (nameof o.DaysBetweenSameMeal), (validateMinimum 0 o.DaysBetweenSameMeal)
+      (nameof o.DaysToCalculate), (validateMinimum 1 o.DaysToCalculate)
       (nameof o.FromDate), (validateDateNotBefore DateTime.Now o.FromDate) ]
     |> validate

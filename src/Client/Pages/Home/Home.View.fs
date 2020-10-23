@@ -43,24 +43,17 @@ let tryParseDate (s: string) d =
     | _ -> d
 
 let private renderMainBody state dispatch =
-
-    let maxNumberOfMeals =
-        match state.AvailableMeals with
-        | Resolved meals -> Some meals.Length
-        | _ -> Some 0
-
     let form =
         Html.div [ prop.className "flex flex-wrap pb-2"
                    prop.children [ Form.numberInput "Days Between Same Meal"
-                                       (nameof state.Options.FormData.DaysBetweenSameMeal) None
+                                       (nameof state.Options.FormData.DaysBetweenSameMeal) (Some 0)
                                        state.Options.FormData.DaysBetweenSameMeal state.Options.ValidationErrors (fun x ->
                                        { state.Options.FormData with
                                              DaysBetweenSameMeal = tryParseInt x 0 }
                                        |> FormChanged
                                        |> dispatch)
                                    Form.numberInput "Days To Calculate" (nameof state.Options.FormData.DaysToCalculate)
-                                       maxNumberOfMeals state.Options.FormData.DaysToCalculate
-                                       state.Options.ValidationErrors (fun x ->
+                                       (Some 1) state.Options.FormData.DaysToCalculate state.Options.ValidationErrors (fun x ->
                                        { state.Options.FormData with
                                              DaysToCalculate = tryParseInt x 0 }
                                        |> FormChanged

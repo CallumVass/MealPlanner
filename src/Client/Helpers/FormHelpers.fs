@@ -61,7 +61,7 @@ let dateInput (labelText: string) (for': string) (inputValue: DateTime) validati
 
 let numberInput (labelText: string)
                 (for': string)
-                (maxValue: int option)
+                (minValue: int option)
                 (inputValue: int)
                 validationErrors
                 (onChange: string -> unit)
@@ -70,13 +70,12 @@ let numberInput (labelText: string)
         [ prop.className (inputClasses + color validationErrors for')
           prop.id for'
           prop.type' "number"
-          prop.min 0
           prop.valueOrDefault inputValue
           prop.onChange onChange ]
 
     let props =
-        match maxValue with
-        | Some n -> props @ [ prop.max n ]
+        match minValue with
+        | Some i -> props @ [ prop.min i ]
         | None -> props
 
     let input = Html.input props
