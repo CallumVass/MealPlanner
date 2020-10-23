@@ -46,14 +46,11 @@ let textInput (labelText: string) (for': string) (inputValue: string) validation
 let dateInput (labelText: string) (for': string) (inputValue: DateTime) validationErrors (onChange: string -> unit) =
     let dateAsString = inputValue.ToString("yyyy-MM-dd")
 
-    let minDate =
-        DateTime.Now.AddDays(float 1).ToString("yyyy-MM-dd")
-
     let input =
         Html.input [ prop.className (inputClasses + color validationErrors for')
                      prop.id for'
                      prop.type' "date"
-                     Interop.mkAttr "min" minDate
+                     prop.min (DateTime.Now.AddDays(float 1))
                      prop.valueOrDefault dateAsString
                      prop.onChange onChange ]
 
