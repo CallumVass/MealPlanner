@@ -9,21 +9,24 @@ open Home.App
 open Home.Types
 open Shared.Types
 
-let private renderMeal (day, date, meal) =
-    //    Html.div [ Html.p (sprintf "Day: %s Date: %s Meal: %s" day date meal.Name) ]
-
+let private renderMeal (day, date, meal: Meal option) =
     let buildChild (text: string) (value: string) =
-        Html.p
-            [ prop.className "border-b mb-2 pb-2"
-              prop.children [ Html.span [ prop.className "font-semibold"
-                                          prop.text text ]
-                              Html.text value ] ]
+        Html.p [ prop.className "border-b mb-2 pb-2"
+                 prop.children [ Html.span [ prop.className "font-semibold"
+                                             prop.text text ]
+                                 Html.text value ] ]
 
 
     Html.div [ prop.className "grid grid-cols-3"
                prop.children [ buildChild "Day:" (sprintf " %s" day)
                                buildChild "Date:" (sprintf " %s" date)
-                               buildChild "Meal:" (sprintf " %s" meal.Name) ] ]
+                               buildChild
+                                   "Meal:"
+                                   (sprintf
+                                       " %s"
+                                        (meal
+                                         |> Option.map (fun m -> m.Name)
+                                         |> Option.defaultValue "No Applicable Meal Found")) ] ]
 
 let private renderCalculatedMeals dailyMeals =
     Html.div [ prop.className "p-2"

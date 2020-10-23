@@ -12,10 +12,16 @@ let private filterByDayOfWeek dayOfWeek meal =
     |> List.contains dayOfWeek
 
 let private filterByHaveHadMealRecently currentMeals daysBetweenSameMeal meal =
+
+    let filterMeal meal m =
+        match m with
+        | Some m -> m = meal
+        | None -> true
+
     currentMeals
     |> List.rev
     |> List.truncate daysBetweenSameMeal
-    |> List.exists (fun (_, _, m) -> m = meal)
+    |> List.exists (fun (_, _, m) -> m |> filterMeal meal)
     |> not
 
 let private filterMealsWithoutRules meal = meal.Rules.Length = 0
@@ -34,7 +40,7 @@ let private getMeal currentMeals dayOfWeek daysBetweenSameMeal meals =
         |> List.filter (filterByHaveHadMealRecently currentMeals daysBetweenSameMeal)
 
     filteredMeals
-    |> List.item (rnd.Next filteredMeals.Length)
+    |> List.tryItem (rnd.Next filteredMeals.Length)
 
 let private createMeal currentMeals index options meals =
     let date = options.FromDate.AddDays(float index)
