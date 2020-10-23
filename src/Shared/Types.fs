@@ -7,9 +7,12 @@ type Rule =
       Name: string
       ApplicableOn: DayOfWeek list }
 
+type MealCategory = { Id: Guid; Name: string }
+
 type Meal =
     { Id: Guid
       Name: string
+      CategoryName: string option
       Rules: Rule list }
 
 type MealOptions =

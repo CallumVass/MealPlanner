@@ -11,6 +11,7 @@ open Shared.Types
 let defaultMeal =
     { Id = Guid.Empty
       Name = ""
+      CategoryName = None
       Rules = [] }
 
 let defaultState =

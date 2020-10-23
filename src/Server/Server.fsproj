@@ -16,6 +16,7 @@
     <EmbeddedResource Include="Scripts/Script0001 - Initial.sql" />
     <EmbeddedResource Include="Scripts/Script0002 - DayOfWeek.sql" />
     <EmbeddedResource Include="Scripts/Script0003 - AdjustedRuleTable.sql" />
+    <EmbeddedResource Include="Scripts/Script0004 - Added MealCategories.sql" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

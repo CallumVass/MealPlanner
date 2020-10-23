@@ -21,6 +21,7 @@ type Migrator(config: IConfiguration) =
 type private MealEntity =
     { Id: Guid
       UserId: string
+      CategoryName: string option
       Name: string }
 
 [<CLIMutable>]
@@ -53,7 +54,9 @@ let private toRules mealRules =
 let private toDomain (meal: MealEntity) (mealRules: MealRuleEntity seq) =
     { Id = meal.Id
       Name = meal.Name
+      CategoryName = meal.CategoryName
       Rules = (toRules mealRules) |> List.ofSeq }
+
 
 let private getRulesForMeal connection (meal: MealEntity) =
     let sql = """
@@ -121,9 +124,10 @@ let private insertMealRules connection (rules: Rule seq) mealId =
 
 let getMeals connectionString userId =
     let sql = """
-    SELECT Id, Name
-        FROM Meals
-    WHERE UserId = @userId
+    SELECT m.Id, m.Name, c.Name AS CategoryName
+        FROM Meals m
+    LEFT JOIN MealCategories c ON m.CategoryId = c.Id
+    WHERE m.UserId = @userId
     """
 
     async {
