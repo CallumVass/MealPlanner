@@ -1,14 +1,14 @@
-# SAFE Template
-This template can be used to generate a full-stack web application using the [SAFE Stack](https://safe-stack.github.io/). It was created using the dotnet [SAFE Template](https://safe-stack.github.io/docs/template-overview/). If you want to learn more about the template why not start with the [quick start](https://safe-stack.github.io/docs/quickstart/) guide?
+# Meal Planner
+This web application was built using the [SAFE Stack](https://safe-stack.github.io/). I created this web application as a learning exercise to gain a better understanding of what it takes to build a fully functional web application using f#.
 
-## Install pre-requisites
-You'll need to install the following pre-requisites in order to build SAFE applications
+It's my first fully fledged application using f# so it may not be the perfect f# code and I am open to suggestions so feel free to create an issue if you'd like to make a suggestion for improvements.
 
-* The [.NET Core SDK](https://www.microsoft.com/net/download) 3.1 or higher.
-* [npm](https://nodejs.org/en/download/) package manager.
-* [Node LTS](https://nodejs.org/en/download/).
+It features dependency injection, loading configuration from appSettings.json, storing data in a database and authentication using OAuth (Google). So I'd like to think this is a fully fledged application.
+It's built using Azure Devops and hosted on Azure here: http://meal-planner-cv.azurewebsites.net/
 
-## Starting the application
+Thank you for reading.
+
+## Building and Starting the application
 Before you run the project **for the first time only** you must install dotnet "local tools" with this command:
 
 ```bash
@@ -22,20 +22,3 @@ dotnet fake build -t run
 ```
 
 Then open `http://localhost:8080` in your browser.
-
-To run concurrently server and client tests in watch mode (run in a new terminal):
-
-```bash
-dotnet fake build -t runtests
-```
-
-Client tests are available under `http://localhost:8081` in your browser and server tests are running in watch mode in console.
-
-## SAFE Stack Documentation
-If you want to know more about the full Azure Stack and all of it's components (including Azure) visit the official [SAFE documentation](https://safe-stack.github.io/docs/).
-
-You will find more documentation about the used F# components at the following places:
-
-* [Saturn](https://saturnframework.org/docs/)
-* [Fable](https://fable.io/docs/)
-* [Elmish](https://elmish.github.io/elmish/)
