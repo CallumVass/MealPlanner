@@ -21,6 +21,7 @@ type Migrator(config: IConfiguration) =
 type private MealEntity =
     { Id: Guid
       UserId: string
+      CategoryId: Guid option
       CategoryName: string option
       Name: string }
 
@@ -51,10 +52,15 @@ let private toRules mealRules =
     |> Seq.groupBy (fun r -> r.Id, r.Name)
     |> Seq.map toRule
 
+let private applyCategory meal =
+    match meal.CategoryId, meal.CategoryName with
+    | Some i, Some n -> Some { Id = i; Name = n }
+    | _, _ -> None
+
 let private toDomain (meal: MealEntity) (mealRules: MealRuleEntity seq) =
     { Id = meal.Id
       Name = meal.Name
-      CategoryName = meal.CategoryName
+      Category = meal |> applyCategory
       Rules = (toRules mealRules) |> List.ofSeq }
 
 
@@ -124,7 +130,7 @@ let private insertMealRules connection (rules: Rule seq) mealId =
 
 let getMeals connectionString userId =
     let sql = """
-    SELECT m.Id, m.Name, c.Name AS CategoryName
+    SELECT m.Id, m.Name, m.CategoryId, c.Name AS CategoryName
         FROM Meals m
     LEFT JOIN MealCategories c ON m.CategoryId = c.Id
     WHERE m.UserId = @userId
@@ -143,9 +149,10 @@ let getMeals connectionString userId =
 
 let getMeal connectionString mealId userId =
     let sql = """
-    SELECT Id, Name
-        FROM Meals
-    WHERE UserId = @userId AND Id = @mealId
+    SELECT m.Id, m.Name, m.CategoryId, c.Name AS CategoryName
+        FROM Meals m
+    LEFT JOIN MealCategories c ON m.CategoryId = c.Id
+    WHERE m.UserId = @userId AND m.Id = @mealId
     """
 
     async {
@@ -158,14 +165,21 @@ let getMeal connectionString mealId userId =
 
 let addMeal connectionString (meal: Meal) userId =
     let sql = """
-    INSERT INTO Meals (Name, UserId)
+    INSERT INTO Meals (Name, UserId, CategoryId)
     OUTPUT Inserted.Id
-    VALUES (@name, @userId)
+    VALUES (@name, @userId, @categoryId)
     """
 
     async {
         use! connection = getConnection connectionString
-        let! mealId = querySingle connection sql !{| userId = userId; name = meal.Name |}
+
+        let! mealId =
+            querySingle
+                connection
+                sql
+                !{| userId = userId
+                    name = meal.Name
+                    categoryId = meal.Category |> Option.map (fun c -> c.Id) |}
 
         let! _ =
             mealId
@@ -189,7 +203,7 @@ let editMealRules (meal: Meal) connection =
 let editMeal connectionString (meal: Meal) userId =
 
     let sql = """
-    UPDATE Meals SET Name = @name WHERE Id = @id AND UserId = @userId
+    UPDATE Meals SET Name = @name, CategoryId = @categoryId WHERE Id = @id AND UserId = @userId
     """
 
     async {
@@ -201,9 +215,30 @@ let editMeal connectionString (meal: Meal) userId =
                 sql
                 !{| name = meal.Name
                     id = meal.Id
+                    categoryId = meal.Category |> Option.map (fun c -> c.Id)
                     userId = userId |}
 
         let! _ = connection |> editMealRules meal
+
+        return ()
+    }
+
+let addCategory connectionString (category: MealCategory) userId =
+    let sql = """
+    INSERT INTO MealCategories (Name, UserId)
+    OUTPUT Inserted.Id
+    VALUES (@name, @userId)
+    """
+
+    async {
+        use! connection = getConnection connectionString
+
+        let! _ =
+            querySingle
+                connection
+                sql
+                !{| userId = userId
+                    name = category.Name |}
 
         return ()
     }
@@ -240,6 +275,19 @@ let private getRules connectionString userId =
         return result |> toRules |> List.ofSeq
     }
 
+let private getCategories connectionString userId =
+    let sql = """
+    SELECT DISTINCT r.Id, r.Name
+        FROM MealCategories r
+    WHERE r.UserId = @userId
+    """
+
+    async {
+        use! connection = getConnection connectionString
+        let! result = query connection sql !{| userId = userId |}
+        return result |> List.ofSeq
+    }
+
 let getDaysOfWeek connectionString =
     let sql = """
     SELECT DayOfWeek
@@ -274,3 +322,8 @@ type MealStorage(config: IConfiguration) =
     member __.AddRule rule userId = userId |> addRule connectionString rule
 
     member __.GetDaysOfWeek = connectionString |> getDaysOfWeek
+
+    member __.AddCategory category userId =
+        userId |> addCategory connectionString category
+
+    member __.GetCategories userId = userId |> getCategories connectionString

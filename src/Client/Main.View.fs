@@ -5,12 +5,13 @@ open Feliz.Router
 open Types
 
 let private linkContainer (link: ReactElement) =
-    Html.div [ prop.className "mr-3"
+    Html.div [ prop.className "mr-3 mt-3 md:mt-0"
                prop.children link ]
 
 let private links =
     [ linkContainer (View.buttonLink "Add Meal" (Router.format ("meals", "new")))
-      linkContainer (View.buttonLink "Add Rule" (Router.format ("rules", "new"))) ]
+      linkContainer (View.buttonLink "Add Rule" (Router.format ("rules", "new")))
+      linkContainer (View.buttonLink "Add Category" (Router.format ("categories", "new"))) ]
 
 let private renderLinks state =
     match state.User with
@@ -50,6 +51,7 @@ let render (state: State) (dispatch: Msg -> unit) =
         | [ "meals"; Route.Guid mealId; "edit" ] -> EditMeal.View.render ({ MealId = mealId })
         | [ "rules"; "new" ] -> NewRule.View.render ()
         | [ "meals"; "new" ] -> NewMeal.View.render ()
+        | [ "categories"; "new" ] -> NewCategory.View.render ()
         | _ -> Home.View.render ()
 
     let body =

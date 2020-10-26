@@ -11,15 +11,21 @@ open Shared.Types
 let defaultMeal =
     { Id = Guid.Empty
       Name = ""
-      CategoryName = None
+      Category = None
       Rules = [] }
 
 let defaultState =
     { Meal = defaultMeal |> ValidatedForm.init
+      Categories = HasNotStartedYet
       Rules = HasNotStartedYet }
 
 let init =
-    defaultState, Cmd.ofMsg (GetRules Started)
+
+    let messages =
+        [ Cmd.ofMsg (GetRules Started)
+          Cmd.ofMsg (GetCategories Started) ]
+
+    defaultState, Cmd.batch messages
 
 let update msg (state: State) =
     match msg with
@@ -32,6 +38,18 @@ let update msg (state: State) =
 
         { state with Rules = InProgress }, Cmd.fromAsync loadRules
     | GetRules (Finished rules) -> { state with Rules = Resolved rules }, Cmd.none
+    | GetCategories Started ->
+        let loadCategories =
+            async {
+                let! categories = Api.mealApi.GetCategories()
+                return GetCategories(Finished categories)
+            }
+
+        { state with Categories = InProgress }, Cmd.fromAsync loadCategories
+    | GetCategories (Finished categories) ->
+        { state with
+              Categories = Resolved categories },
+        Cmd.none
     | FormChanged f ->
         { state with
               Meal =

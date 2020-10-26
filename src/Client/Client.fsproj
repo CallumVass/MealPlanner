@@ -4,35 +4,38 @@
         <LangVersion>preview</LangVersion>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Shared\Shared.fsproj"/>
+        <ProjectReference Include="..\Shared\Shared.fsproj" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="index.html"/>
-        <None Include="paket.references"/>
-        <Compile Include="Form.fs"/>
-        <Compile Include="Helpers/ViewHelpers.fs"/>
-        <Compile Include="Helpers/FormHelpers.fs"/>
-        <Compile Include="Helpers/MealHelpers.fs"/>
-        <Compile Include="Extensions.fs"/>
-        <Compile Include="Api.fs"/>
-        <Compile Include="Pages/Home/Home.Types.fs"/>
-        <Compile Include="Pages/Home/Home.Logic.fs"/>
-        <Compile Include="Pages/Home/Home.App.fs"/>
-        <Compile Include="Pages/Home/Home.View.fs"/>
-        <Compile Include="Pages/EditMeal/EditMeal.Types.fs"/>
-        <Compile Include="Pages/EditMeal/EditMeal.App.fs"/>
-        <Compile Include="Pages/EditMeal/EditMeal.View.fs"/>
-        <Compile Include="Pages/NewRule/NewRule.Types.fs"/>
-        <Compile Include="Pages/NewRule/NewRule.App.fs"/>
-        <Compile Include="Pages/NewRule/NewRule.View.fs"/>
-        <Compile Include="Pages/NewMeal/NewMeal.Types.fs"/>
-        <Compile Include="Pages/NewMeal/NewMeal.App.fs"/>
-        <Compile Include="Pages/NewMeal/NewMeal.View.fs"/>
-        <Compile Include="Main.Types.fs"/>
-        <Compile Include="Main.Logic.fs"/>
-        <Compile Include="Main.App.fs"/>
-        <Compile Include="Main.View.fs"/>
-        <Compile Include="Root.fs"/>
+        <None Include="index.html" />
+        <None Include="paket.references" />
+        <Compile Include="Form.fs" />
+        <Compile Include="Helpers/ViewHelpers.fs" />
+        <Compile Include="Helpers/FormHelpers.fs" />
+        <Compile Include="Helpers/MealHelpers.fs" />
+        <Compile Include="Extensions.fs" />
+        <Compile Include="Api.fs" />
+        <Compile Include="Pages/Home/Home.Types.fs" />
+        <Compile Include="Pages/Home/Home.Logic.fs" />
+        <Compile Include="Pages/Home/Home.App.fs" />
+        <Compile Include="Pages/Home/Home.View.fs" />
+        <Compile Include="Pages/EditMeal/EditMeal.Types.fs" />
+        <Compile Include="Pages/EditMeal/EditMeal.App.fs" />
+        <Compile Include="Pages/EditMeal/EditMeal.View.fs" />
+        <Compile Include="Pages/NewRule/NewRule.Types.fs" />
+        <Compile Include="Pages/NewRule/NewRule.App.fs" />
+        <Compile Include="Pages/NewRule/NewRule.View.fs" />
+        <Compile Include="Pages/NewMeal/NewMeal.Types.fs" />
+        <Compile Include="Pages/NewMeal/NewMeal.App.fs" />
+        <Compile Include="Pages/NewMeal/NewMeal.View.fs" />
+        <Compile Include="Pages\NewCategory\NewCategory.Types.fs" />
+        <Compile Include="Pages\NewCategory\NewCategory.App.fs" />
+        <Compile Include="Pages\NewCategory\NewCategory.View.fs" />
+        <Compile Include="Main.Types.fs" />
+        <Compile Include="Main.Logic.fs" />
+        <Compile Include="Main.App.fs" />
+        <Compile Include="Main.View.fs" />
+        <Compile Include="Root.fs" />
     </ItemGroup>
-    <Import Project="..\..\.paket\Paket.Restore.targets"/>
+    <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

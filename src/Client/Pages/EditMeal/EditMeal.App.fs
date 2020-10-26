@@ -9,12 +9,14 @@ open Feliz.Router
 let defaultState mealId =
     { MealId = mealId
       Meal = HasNotStartedYet
+      Categories = HasNotStartedYet
       Rules = HasNotStartedYet }
 
 let init mealId =
 
     let messages =
         [ Cmd.ofMsg (GetMeal Started)
+          Cmd.ofMsg (GetCategories Started)
           Cmd.ofMsg (GetRules Started) ]
 
     defaultState mealId, Cmd.batch messages
@@ -43,6 +45,18 @@ let update msg state =
 
         { state with Rules = InProgress }, Cmd.fromAsync loadRules
     | GetRules (Finished rules) -> { state with Rules = Resolved rules }, Cmd.none
+    | GetCategories Started ->
+        let loadCategories =
+            async {
+                let! categories = Api.mealApi.GetCategories()
+                return GetCategories(Finished categories)
+            }
+
+        { state with Categories = InProgress }, Cmd.fromAsync loadCategories
+    | GetCategories (Finished categories) ->
+        { state with
+              Categories = Resolved categories },
+        Cmd.none
     | GetMeal Started ->
         let loadMeal =
             async {
@@ -55,6 +69,7 @@ let update msg state =
         state
         |> updateResolvedState meal ValidatedForm.init
     | FormChanged f ->
+        printfn "%A" f
         match state.Meal with
         | Resolved m ->
             state

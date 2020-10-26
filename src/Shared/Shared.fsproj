@@ -10,5 +10,6 @@
     <Compile Include="Home/Validation.fs" />
     <Compile Include="Rule/Validation.fs" />
     <Compile Include="Meal\Validation.fs" />
+    <Compile Include="Category\Validation.fs" />
   </ItemGroup>
 </Project>

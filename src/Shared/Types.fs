@@ -12,11 +12,12 @@ type MealCategory = { Id: Guid; Name: string }
 type Meal =
     { Id: Guid
       Name: string
-      CategoryName: string option
+      Category: MealCategory option
       Rules: Rule list }
 
 type MealOptions =
     { DaysBetweenSameMeal: int
+      DaysBetweenSameMealCategory: int
       DaysToCalculate: int
       FromDate: DateTime }
 
@@ -33,4 +34,6 @@ type IMealApi =
       EditMeal: Meal -> Async<unit>
       GetRules: unit -> Async<Rule list>
       AddRule: Rule -> Async<unit>
-      GetDaysOfWeek: unit -> Async<DayOfWeek list> }
+      GetDaysOfWeek: unit -> Async<DayOfWeek list>
+      AddCategory: MealCategory -> Async<unit>
+      GetCategories: unit -> Async<MealCategory list> }

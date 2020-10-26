@@ -52,6 +52,13 @@ let private renderMainBody state dispatch =
                                              DaysBetweenSameMeal = tryParseInt x 0 }
                                        |> FormChanged
                                        |> dispatch)
+                                   Form.numberInput "Days Between Same Meal Category"
+                                       (nameof state.Options.FormData.DaysBetweenSameMealCategory) (Some 0)
+                                       state.Options.FormData.DaysBetweenSameMealCategory state.Options.ValidationErrors (fun x ->
+                                       { state.Options.FormData with
+                                             DaysBetweenSameMealCategory = tryParseInt x 0 }
+                                       |> FormChanged
+                                       |> dispatch)
                                    Form.numberInput "Days To Calculate" (nameof state.Options.FormData.DaysToCalculate)
                                        (Some 1) state.Options.FormData.DaysToCalculate state.Options.ValidationErrors (fun x ->
                                        { state.Options.FormData with

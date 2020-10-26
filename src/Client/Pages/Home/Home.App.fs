@@ -12,6 +12,7 @@ open Shared.Home.Validation
 let defaultOptions =
     { DaysBetweenSameMeal = 14
       DaysToCalculate = 1
+      DaysBetweenSameMealCategory = 0
       FromDate = DateTime.Now.AddDays(float 1).Date }
 
 let defaultState =

@@ -6,11 +6,11 @@ open NewMeal.Types
 open Feliz.UseElmish
 
 let private renderMainBody dispatch state =
-    match state.Rules with
-    | Resolved rules ->
+    match state.Rules, state.Categories with
+    | Resolved rules, Resolved categories ->
         state.Meal
-        |> Meal.render dispatch rules FormChanged TrySave
-    | _ -> Html.none
+        |> Meal.render dispatch rules categories FormChanged TrySave
+    | _, _ -> Html.none
 
 let private view =
     fun () ->

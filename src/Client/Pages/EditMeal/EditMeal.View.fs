@@ -11,15 +11,15 @@ open Shared.Types
 
 type EditMealProps = { MealId: Guid }
 
-let private maybeRenderMeal dispatch rules (meal: ValidatedForm<Meal> option) =
+let private maybeRenderMeal dispatch rules categories (meal: ValidatedForm<Meal> option) =
     meal
-    |> Option.map (Meal.render dispatch rules FormChanged TrySave)
+    |> Option.map (Meal.render dispatch rules categories FormChanged TrySave)
     |> Option.defaultValue Html.none
 
 let private renderMainBody dispatch state =
-    match state.Meal, state.Rules with
-    | Resolved meal, Resolved rules -> meal |> maybeRenderMeal dispatch rules
-    | _, _ -> Html.none
+    match state.Meal, state.Rules, state.Categories with
+    | Resolved meal, Resolved rules, Resolved categories -> meal |> maybeRenderMeal dispatch rules categories
+    | _, _, _ -> Html.none
 
 let private view =
     fun (props: EditMealProps) ->
