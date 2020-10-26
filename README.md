@@ -8,6 +8,13 @@ It's built using Azure Devops and hosted on Azure here: http://meal-planner-cv.a
 
 Thank you for reading.
 
+## To-do
+
+- [ ] Edit/Delete Rules
+- [ ] Edit/Delete Categories
+- [ ] Save your meal plan so it remembers what you've had
+- [ ] Generate shopping/ingredient list
+
 ## Building and Starting the application
 Before you run the project **for the first time only** you must install dotnet "local tools" with this command:
 
