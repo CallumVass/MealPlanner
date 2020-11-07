@@ -3,24 +3,51 @@ module View
 
 open Feliz
 
-let baseClasses =
-    "block bg-green-500 text-white font-bold py-2 px-4 rounded"
+type Colour =
+    | Green
+    | Red
 
-let nonDisabledClasses =
-    "hover:bg-green-700 focus:outline-none focus:shadow-outline"
+let baseClasses colour =
+    let buttonColour =
+        match colour with
+        | Green -> "bg-green-500"
+        | Red -> "bg-red-500"
+
+    "block text-white font-bold py-2 px-4 rounded"
+    + " "
+    + buttonColour
+
+let nonDisabledClasses colour =
+    let hoverColour =
+        match colour with
+        | Green -> "hover:bg-green-700"
+        | Red -> "hover:bg-red-700"
+
+    "focus:outline-none focus:shadow-outline"
+    + " "
+    + hoverColour
 
 let buttonLink (text: string) (href: string) =
-    let combinedClasses = baseClasses + " " + nonDisabledClasses
+    let combinedClasses =
+        (baseClasses Green)
+        + " "
+        + (nonDisabledClasses Green)
+
     Html.a [ prop.href href
              prop.text text
              prop.className combinedClasses ]
 
-let button isDisabled (text: string) onClick =
+let private button isDisabled (text: string) colour onClick =
 
     let disabledClasses = "opacity-50 cursor-not-allowed"
 
     let combinedClasses =
-        if isDisabled then baseClasses + " " + disabledClasses else baseClasses + " " + nonDisabledClasses
+        if isDisabled then
+            baseClasses colour + " " + disabledClasses
+        else
+            baseClasses colour
+            + " "
+            + (nonDisabledClasses colour)
 
     Html.div [ prop.className "flex px-3"
                prop.children
@@ -41,3 +68,8 @@ let box (children: ReactElement seq) =
 let renderBody (children: ReactElement seq) =
     Html.div [ prop.className "flex flex-wrap mx-4"
                prop.children children ]
+
+let greenButton isDisabled (text: string) onClick = button isDisabled text Green onClick
+let enabledGreenButton (text: string) onClick = button false text Green onClick
+let disabledGreenButton (text: string) onClick = button true text Green onClick
+let enabledRedButton (text: string) onClick = button false text Red onClick

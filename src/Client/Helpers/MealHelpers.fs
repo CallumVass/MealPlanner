@@ -99,7 +99,7 @@ let render dispatch rules (categories: MealCategory list) formChangeMsg formSave
                    prop.children inputs ]
 
     let editMealButton =
-        View.button (not meal.ValidationErrors.IsEmpty) "Save" (fun _ -> (formSaveMsg meal) |> dispatch)
+        View.greenButton (not meal.ValidationErrors.IsEmpty) "Save" (fun _ -> (formSaveMsg meal) |> dispatch)
 
     let formContainer =
         View.box [ (View.h2 "Meals")

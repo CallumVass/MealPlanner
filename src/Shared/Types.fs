@@ -36,4 +36,5 @@ type IMealApi =
       AddRule: Rule -> Async<unit>
       GetDaysOfWeek: unit -> Async<DayOfWeek list>
       AddCategory: MealCategory -> Async<unit>
-      GetCategories: unit -> Async<MealCategory list> }
+      GetCategories: unit -> Async<MealCategory list>
+      DeleteMeal: Guid -> Async<unit> }

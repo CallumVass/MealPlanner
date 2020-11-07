@@ -25,7 +25,8 @@ let mealApi userId (storage: MealStorage) =
       AddRule = fun rule -> userId |> storage.AddRule rule
       GetDaysOfWeek = fun () -> storage.GetDaysOfWeek
       AddCategory = fun category -> userId |> storage.AddCategory category
-      GetCategories = fun () -> userId |> storage.GetCategories }
+      GetCategories = fun () -> userId |> storage.GetCategories
+      DeleteMeal = fun mealId -> userId |> storage.DeleteMeal mealId }
 
 let createApi mealApi (context: HttpContext) =
 

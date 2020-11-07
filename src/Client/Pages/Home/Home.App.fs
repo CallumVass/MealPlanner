@@ -25,6 +25,14 @@ let init () =
 
 let update msg state =
     match msg with
+    | DeleteMeal mealId ->
+        let deleteMeal =
+            async {
+                let! _ = mealApi.DeleteMeal mealId
+                return GetMeals Started
+            }
+
+        state, Cmd.fromAsync deleteMeal
     | GetMeals Started ->
         let loadMeals =
             async {

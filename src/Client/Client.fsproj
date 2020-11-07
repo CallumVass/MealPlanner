@@ -34,6 +34,7 @@
         <Compile Include="Main.Types.fs" />
         <Compile Include="Main.Logic.fs" />
         <Compile Include="Main.App.fs" />
+        <Compile Include="Router.fs" />
         <Compile Include="Main.View.fs" />
         <Compile Include="Root.fs" />
     </ItemGroup>

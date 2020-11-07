@@ -62,13 +62,12 @@ let private renderForm state dispatch =
                    prop.children inputs ]
 
     let createRuleButton =
-        View.button (not state.Rule.ValidationErrors.IsEmpty) "Create Rule" (fun _ -> TrySave |> dispatch)
+        View.greenButton (not state.Rule.ValidationErrors.IsEmpty) "Create Rule" (fun _ -> TrySave |> dispatch)
 
     Html.div [ prop.className "w-full mb-2"
-               prop.children
-                   [ (View.box [ View.h2 "New Rule"
-                                 form
-                                 createRuleButton ]) ] ]
+               prop.children [ (View.box [ View.h2 "New Rule"
+                                           form
+                                           createRuleButton ]) ] ]
 
 let private view =
     fun () ->

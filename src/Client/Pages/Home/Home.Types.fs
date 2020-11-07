@@ -1,5 +1,6 @@
 module Home.Types
 
+open System
 open Shared.Types
 open Form.Types
 
@@ -11,4 +12,5 @@ type State =
 type Msg =
     | GetMeals of AsyncOperationStatus<Meal list>
     | Calculate
+    | DeleteMeal of Guid
     | FormChanged of MealOptions

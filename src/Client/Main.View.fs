@@ -9,6 +9,8 @@ let private linkContainer (link: ReactElement) =
                prop.children link ]
 
 let private links =
+    //   linkContainer (View.buttonLink "Rules" (Router.format ("rules")))
+    //   linkContainer (View.buttonLink "Categories" (Router.format ("categories")))
     [ linkContainer (View.buttonLink "Add Meal" (Router.format ("meals", "new")))
       linkContainer (View.buttonLink "Add Rule" (Router.format ("rules", "new")))
       linkContainer (View.buttonLink "Add Category" (Router.format ("categories", "new"))) ]
@@ -23,9 +25,8 @@ let private renderLinks state =
 let private renderHeader state =
     let h1 =
         Html.h1 [ prop.className "text-3xl font-semibold text-white"
-                  prop.children
-                      [ Html.a [ prop.text "Meal Planner"
-                                 prop.href (Router.format ("")) ] ] ]
+                  prop.children [ Html.a [ prop.text "Meal Planner"
+                                           prop.href (Router.format ("")) ] ] ]
 
     let links = renderLinks state
 
@@ -35,9 +36,8 @@ let private renderHeader state =
 
 let private renderLoginButton =
     Html.div [ prop.className "w-full"
-               prop.children
-                   [ Html.div [ prop.className "mx-4"
-                                prop.children (View.buttonLink "Login with Google" "/login") ] ] ]
+               prop.children [ Html.div [ prop.className "mx-4"
+                                          prop.children (View.buttonLink "Login with Google" "/login") ] ] ]
 
 let private renderCurrentState activePage state =
     match state.User with
@@ -45,17 +45,9 @@ let private renderCurrentState activePage state =
     | Anonymous -> renderLoginButton
 
 let render (state: State) (dispatch: Msg -> unit) =
-    let activePage =
-        match state.CurrentUrl with
-        | [] -> Home.View.render ()
-        | [ "meals"; Route.Guid mealId; "edit" ] -> EditMeal.View.render ({ MealId = mealId })
-        | [ "rules"; "new" ] -> NewRule.View.render ()
-        | [ "meals"; "new" ] -> NewMeal.View.render ()
-        | [ "categories"; "new" ] -> NewCategory.View.render ()
-        | _ -> Home.View.render ()
-
     let body =
-        state |> (renderCurrentState (activePage))
+        state
+        |> (renderCurrentState (state |> Router.activePage))
 
     let page =
         Html.div [ prop.className "min-h-screen bg-gray-200 text-gray-800"

@@ -304,6 +304,24 @@ let getDaysOfWeek connectionString =
                |> List.ofSeq
     }
 
+let deleteMeal connectionString mealId userId =
+    let sql = """
+
+    DELETE mr FROM MealRules mr
+        INNER JOIN Meals m ON mr.MealId = m.Id
+    WHERE m.Id = @mealId AND m.UserId = @userId
+
+    DELETE m FROM Meals m
+    WHERE m.Id = @mealId AND m.UserId = @userId
+
+    """
+
+    async {
+        use! connection = getConnection connectionString
+        let! _ = execute connection sql !{| userId = userId; mealId = mealId |}
+        return ()
+    }
+
 type MealStorage(config: IConfiguration) =
     let connectionString =
         config.GetConnectionString("MealPlanner")
@@ -312,6 +330,9 @@ type MealStorage(config: IConfiguration) =
 
     member __.GetMeal mealId userId =
         userId |> getMeal connectionString mealId
+
+    member __.DeleteMeal mealId userId =
+        userId |> deleteMeal connectionString mealId
 
     member __.AddMeal meal userId = userId |> addMeal connectionString meal
 

@@ -86,10 +86,10 @@ let private renderMainBody state dispatch =
     let createMealPlanButton =
         match state.AvailableMeals with
         | Resolved meals ->
-            View.button
+            View.greenButton
                 (meals.IsEmpty
                  || not state.Options.ValidationErrors.IsEmpty) "Create Meal Plan" (fun _ -> Calculate |> dispatch)
-        | _ -> View.button true "Create Meal Plan" (fun _ -> Calculate |> dispatch)
+        | _ -> View.disabledGreenButton "Create Meal Plan" (fun _ -> Calculate |> dispatch)
 
     Html.div [ prop.className "w-full sm:w-full md:w-3/5 pr-0 md:pr-2 mb-4"
                prop.children [ (View.box [ View.h2 "Meals"
@@ -97,16 +97,18 @@ let private renderMainBody state dispatch =
                                            createMealPlanButton ])
                                mealPlan ] ]
 
-let private renderMealItem meal =
+let private renderMealItem dispatch meal =
 
     let actions =
-        Html.div [ View.buttonLink "Edit" (Router.format ("meals", (sprintf "%A" meal.Id), "edit")) ]
+        Html.div [ prop.className "flex"
+                   prop.children [ View.buttonLink "Edit" (Router.format ("meals", (sprintf "%A" meal.Id), "edit"))
+                                   View.enabledRedButton "Delete" (fun _ -> DeleteMeal meal.Id |> dispatch) ] ]
 
     Html.div [ prop.className "flex justify-between items-center"
                prop.children [ Html.text meal.Name
                                actions ] ]
 
-let private renderMealList availableMeals =
+let private renderMealList dispatch availableMeals =
 
     match availableMeals with
     | HasNotStartedYet -> Html.none
@@ -117,7 +119,7 @@ let private renderMealList availableMeals =
                       prop.children
                           [ for meal in meals ->
                               Html.li [ prop.className "p-4 border-b"
-                                        prop.children (renderMealItem meal) ] ] ]
+                                        prop.children (meal |> renderMealItem dispatch) ] ] ]
 
         Html.div [ prop.className "w-full sm:w-full md:w-2/5 pl-0 md:pl-2 mb-4"
                    prop.children
@@ -130,7 +132,7 @@ let private view =
 
         let children =
             [ renderMainBody state dispatch
-              renderMealList state.AvailableMeals ]
+              state.AvailableMeals |> renderMealList dispatch ]
 
         children |> View.renderBody
 

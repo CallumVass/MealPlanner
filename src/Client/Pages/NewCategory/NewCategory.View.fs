@@ -20,7 +20,7 @@ let private renderMainBody dispatch state =
                    prop.children inputs ]
 
     let addCategoryButton =
-        View.button (not state.Category.ValidationErrors.IsEmpty) "Save" (fun _ -> Save |> dispatch)
+        View.greenButton (not state.Category.ValidationErrors.IsEmpty) "Save" (fun _ -> Save |> dispatch)
 
     let formContainer =
         View.box [ (View.h2 "New Category")
