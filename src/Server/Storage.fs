@@ -128,7 +128,7 @@ let private insertMealRules connection (rules: Rule seq) mealId =
         return ()
     }
 
-let getMeals connectionString userId =
+let private getMeals connectionString userId =
     let sql = """
     SELECT m.Id, m.Name, m.CategoryId, c.Name AS CategoryName
         FROM Meals m
@@ -147,7 +147,7 @@ let getMeals connectionString userId =
         return meals |> List.ofSeq
     }
 
-let getMeal connectionString mealId userId =
+let private getMeal connectionString mealId userId =
     let sql = """
     SELECT m.Id, m.Name, m.CategoryId, c.Name AS CategoryName
         FROM Meals m
@@ -163,7 +163,7 @@ let getMeal connectionString mealId userId =
                 |> Option.asyncApply (getRulesForMeal connection)
     }
 
-let addMeal connectionString (meal: Meal) userId =
+let private addMeal connectionString (meal: Meal) userId =
     let sql = """
     INSERT INTO Meals (Name, UserId, CategoryId)
     OUTPUT Inserted.Id
@@ -188,7 +188,7 @@ let addMeal connectionString (meal: Meal) userId =
         return ()
     }
 
-let editMealRules (meal: Meal) connection =
+let private editMealRules (meal: Meal) connection =
     let sql = """
     DELETE FROM MealRules WHERE MealId = @mealId
     """
@@ -200,7 +200,7 @@ let editMealRules (meal: Meal) connection =
         return ()
     }
 
-let editMeal connectionString (meal: Meal) userId =
+let private editMeal connectionString (meal: Meal) userId =
 
     let sql = """
     UPDATE Meals SET Name = @name, CategoryId = @categoryId WHERE Id = @id AND UserId = @userId
@@ -223,7 +223,7 @@ let editMeal connectionString (meal: Meal) userId =
         return ()
     }
 
-let addCategory connectionString (category: MealCategory) userId =
+let private addCategory connectionString (category: MealCategory) userId =
     let sql = """
     INSERT INTO MealCategories (Name, UserId)
     OUTPUT Inserted.Id
@@ -243,7 +243,7 @@ let addCategory connectionString (category: MealCategory) userId =
         return ()
     }
 
-let addRule connectionString (rule: Rule) userId =
+let private addRule connectionString (rule: Rule) userId =
     let sql = """
     INSERT INTO Rules (Name, UserId)
     OUTPUT Inserted.Id
@@ -288,7 +288,7 @@ let private getCategories connectionString userId =
         return result |> List.ofSeq
     }
 
-let getDaysOfWeek connectionString =
+let private getDaysOfWeek connectionString =
     let sql = """
     SELECT DayOfWeek
         FROM RuleDays
@@ -304,7 +304,7 @@ let getDaysOfWeek connectionString =
                |> List.ofSeq
     }
 
-let deleteMeal connectionString mealId userId =
+let private deleteMeal connectionString mealId userId =
     let sql = """
 
     DELETE mr FROM MealRules mr
@@ -319,6 +319,144 @@ let deleteMeal connectionString mealId userId =
     async {
         use! connection = getConnection connectionString
         let! _ = execute connection sql !{| userId = userId; mealId = mealId |}
+        return ()
+    }
+
+let private deleteRule connectionString ruleId userId =
+    let sql = """
+
+    DELETE mr FROM MealRules mr
+        INNER JOIN Rules m ON mr.RuleId = m.Id
+    WHERE m.Id = @ruleId AND m.UserId = @userId
+
+    DELETE mr FROM RuleRuleDays mr
+        INNER JOIN Rules m ON mr.RuleId = m.Id
+    WHERE m.Id = @ruleId AND m.UserId = @userId
+
+    DELETE m FROM Rules m
+    WHERE m.Id = @mealId AND m.UserId = @userId
+
+    """
+
+    async {
+        use! connection = getConnection connectionString
+        let! _ = execute connection sql !{| userId = userId; ruleId = ruleId |}
+        return ()
+    }
+
+let private deleteCategory connectionString categoryId userId =
+    let sql = """
+
+    UPDATE Meals SET CategoryId = NULL WHERE CategoryId = @categoryId AND UserId = @userId
+
+    DELETE m FROM MealCategories m
+    WHERE m.Id = @categoryId AND m.UserId = @userId
+
+    """
+
+    async {
+        use! connection = getConnection connectionString
+
+        let! _ =
+            execute
+                connection
+                sql
+                !{| userId = userId
+                    categoryId = categoryId |}
+
+        return ()
+    }
+
+let private getRule connectionString ruleId userId =
+    let sql = """
+    SELECT DISTINCT r.Id, r.Name, rd.DayOfWeek
+        FROM Rules r
+	INNER JOIN RuleRuleDays rd ON r.Id = rd.RuleId
+    WHERE r.UserId = @userId AND r.Id = @ruleId
+    """
+
+    async {
+        use! connection = getConnection connectionString
+        let! result = query connection sql !{| userId = userId; ruleId = ruleId |}
+
+        return result
+               |> toRules
+               |> Seq.tryFind (fun r -> r.Id = ruleId)
+    }
+
+let private getCategory connectionString categoryId userId =
+    let sql = """
+    SELECT DISTINCT r.Id, r.Name
+        FROM MealCategories r
+    WHERE r.UserId = @userId AND r.Id = @categoryId
+    """
+
+    async {
+        use! connection = getConnection connectionString
+
+        let! result =
+            querySingle
+                connection
+                sql
+                !{| userId = userId
+                    categoryId = categoryId |}
+
+        return result
+    }
+
+let private editCategory connectionString (category: MealCategory) userId =
+    let sql = """
+    UPDATE MealCategories SET Name = @name WHERE Id = @id AND UserId = @userId
+    """
+
+    async {
+        use! connection = getConnection connectionString
+
+        let! _ =
+            execute
+                connection
+                sql
+                !{| name = category.Name
+                    id = category.Id
+                    userId = userId |}
+
+        return ()
+    }
+
+let private editRuleDays (rule: Rule) connection =
+    let sql = """
+    DELETE FROM RuleRuleDays WHERE RuleId = @ruleId
+    """
+
+    async {
+        let! _ = execute connection sql !{| ruleId = rule.Id |}
+
+        let! _ =
+            rule.Id
+            |> insertRuleDays connection rule.ApplicableOn
+
+        return ()
+    }
+
+let private editRule connectionString (rule: Rule) userId =
+
+    let sql = """
+    UPDATE Rules SET Name = @name WHERE Id = @id AND UserId = @userId
+    """
+
+    async {
+        use! connection = getConnection connectionString
+
+        let! _ =
+            execute
+                connection
+                sql
+                !{| name = rule.Name
+                    id = rule.Id
+                    userId = userId |}
+
+        let! _ = connection |> editRuleDays rule
+
         return ()
     }
 
@@ -348,3 +486,21 @@ type MealStorage(config: IConfiguration) =
         userId |> addCategory connectionString category
 
     member __.GetCategories userId = userId |> getCategories connectionString
+
+    member __.DeleteRule ruleId userId =
+        userId |> deleteRule connectionString ruleId
+
+    member __.DeleteCategory categoryId userId =
+        userId
+        |> deleteCategory connectionString categoryId
+
+    member __.GetRule ruleId userId =
+        userId |> getRule connectionString ruleId
+
+    member __.EditRule rule userId = userId |> editRule connectionString rule
+
+    member __.GetCategory categoryId userId =
+        userId |> getCategory connectionString categoryId
+
+    member __.EditCategory category userId =
+        userId |> editCategory connectionString category

@@ -9,11 +9,9 @@ let private linkContainer (link: ReactElement) =
                prop.children link ]
 
 let private links =
-    //   linkContainer (View.buttonLink "Rules" (Router.format ("rules")))
-    //   linkContainer (View.buttonLink "Categories" (Router.format ("categories")))
     [ linkContainer (View.buttonLink "Add Meal" (Router.format ("meals", "new")))
-      linkContainer (View.buttonLink "Add Rule" (Router.format ("rules", "new")))
-      linkContainer (View.buttonLink "Add Category" (Router.format ("categories", "new"))) ]
+      linkContainer (View.buttonLink "Rules" (Router.format ("rules")))
+      linkContainer (View.buttonLink "Categories" (Router.format ("categories"))) ]
 
 let private renderLinks state =
     match state.User with
@@ -25,8 +23,9 @@ let private renderLinks state =
 let private renderHeader state =
     let h1 =
         Html.h1 [ prop.className "text-3xl font-semibold text-white"
-                  prop.children [ Html.a [ prop.text "Meal Planner"
-                                           prop.href (Router.format ("")) ] ] ]
+                  prop.children
+                      [ Html.a [ prop.text "Meal Planner"
+                                 prop.href (Router.format ("")) ] ] ]
 
     let links = renderLinks state
 
@@ -36,8 +35,9 @@ let private renderHeader state =
 
 let private renderLoginButton =
     Html.div [ prop.className "w-full"
-               prop.children [ Html.div [ prop.className "mx-4"
-                                          prop.children (View.buttonLink "Login with Google" "/login") ] ] ]
+               prop.children
+                   [ Html.div [ prop.className "mx-4"
+                                prop.children (View.buttonLink "Login with Google" "/login") ] ] ]
 
 let private renderCurrentState activePage state =
     match state.User with

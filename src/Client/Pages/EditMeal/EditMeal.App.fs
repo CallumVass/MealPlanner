@@ -22,7 +22,9 @@ let init mealId =
     defaultState mealId, Cmd.batch messages
 
 let private resolveForm fn state f =
-    let form = f |> fn
+    let form =
+        f |> fn |> ValidatedForm.validateWith validateMeal
+
     { state with
           Meal = Resolved(Some form) }
 
@@ -69,7 +71,6 @@ let update msg state =
         state
         |> updateResolvedState meal ValidatedForm.init
     | FormChanged f ->
-        printfn "%A" f
         match state.Meal with
         | Resolved m ->
             state

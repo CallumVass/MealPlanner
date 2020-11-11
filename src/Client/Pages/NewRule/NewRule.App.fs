@@ -55,11 +55,10 @@ let update msg state =
         let newRule = { state.Rule with IsLoading = true }
 
         { state with Rule = newRule }, Cmd.fromAsync saveForm
-    | TrySave ->
-        let state =
-            { state with
-                  Rule =
-                      state.Rule
-                      |> ValidatedForm.validateWith validateRule }
+    | TrySave rule ->
 
-        if state.Rule.ValidationErrors.IsEmpty then state, Cmd.ofMsg Save else state, Cmd.none
+        let validatedRule =
+            rule |> ValidatedForm.validateWith validateRule
+
+        let newState = { state with Rule = validatedRule }
+        if validatedRule.ValidationErrors.IsEmpty then newState, Cmd.ofMsg Save else newState, Cmd.none

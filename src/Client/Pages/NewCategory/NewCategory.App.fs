@@ -26,19 +26,25 @@ let update msg (state: State) =
         Cmd.none
     | FormSaved -> state, Cmd.navigate ("")
     | Save ->
-        let validatedForm =
+        let saveForm =
+            async {
+                let! _ = Api.mealApi.AddCategory state.Category.FormData
+                return FormSaved
+            }
+
+        let newCategory = { state.Category with IsLoading = true }
+
+        { state with Category = newCategory }, Cmd.fromAsync saveForm
+    | TrySave category ->
+
+        let validatedCategory =
+            category
+            |> ValidatedForm.validateWith validateCategory
+
+        let newState =
             { state with
-                  Category =
-                      state.Category
-                      |> ValidatedForm.validateWith validateCategory }
+                  Category = validatedCategory }
 
-        if validatedForm.Category.ValidationErrors.IsEmpty then
-            let saveForm =
-                async {
-                    let! _ = Api.mealApi.AddCategory state.Category.FormData
-                    return FormSaved
-                }
-
-            state, Cmd.fromAsync saveForm
-        else
-            validatedForm, Cmd.none
+        if validatedCategory.ValidationErrors.IsEmpty
+        then newState, Cmd.ofMsg Save
+        else newState, Cmd.none

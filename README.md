@@ -10,8 +10,6 @@ Thank you for reading.
 
 ## To-do
 
-- [ ] Edit/Delete Rules
-- [ ] Edit/Delete Categories
 - [ ] Save your meal plan so it remembers what you've had
 - [ ] Generate shopping/ingredient list
 

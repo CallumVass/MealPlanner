@@ -49,7 +49,7 @@ let private button isDisabled (text: string) colour onClick =
             + " "
             + (nonDisabledClasses colour)
 
-    Html.div [ prop.className "flex px-3"
+    Html.div [ prop.className "flex pl-3"
                prop.children
                    [ Html.button [ prop.className combinedClasses
                                    prop.text text

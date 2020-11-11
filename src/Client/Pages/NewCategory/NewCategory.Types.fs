@@ -9,5 +9,6 @@ type State =
 
 type Msg =
     | FormChanged of MealCategory
+    | TrySave of ValidatedForm<MealCategory>
     | Save
     | FormSaved

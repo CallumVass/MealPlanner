@@ -11,6 +11,6 @@ type State =
 type Msg =
     | GetDaysOfWeek of AsyncOperationStatus<DayOfWeek list>
     | FormChanged of Rule
-    | TrySave
+    | TrySave of ValidatedForm<Rule>
     | Save
     | FormSaved

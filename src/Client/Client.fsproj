@@ -13,6 +13,8 @@
         <Compile Include="Helpers/ViewHelpers.fs" />
         <Compile Include="Helpers/FormHelpers.fs" />
         <Compile Include="Helpers/MealHelpers.fs" />
+        <Compile Include="Helpers\RuleHelpers.fs" />
+        <Compile Include="Helpers\CategoryHelpers.fs" />
         <Compile Include="Extensions.fs" />
         <Compile Include="Api.fs" />
         <Compile Include="Pages/Home/Home.Types.fs" />
@@ -31,6 +33,18 @@
         <Compile Include="Pages\NewCategory\NewCategory.Types.fs" />
         <Compile Include="Pages\NewCategory\NewCategory.App.fs" />
         <Compile Include="Pages\NewCategory\NewCategory.View.fs" />
+        <Compile Include="Pages\RuleList\RuleList.Types.fs" />
+        <Compile Include="Pages\RuleList\RuleList.App.fs" />
+        <Compile Include="Pages\RuleList\RuleList.View.fs" />
+        <Compile Include="Pages\CategoryList\CategoryList.Types.fs" />
+        <Compile Include="Pages\CategoryList\CategoryList.App.fs" />
+        <Compile Include="Pages\CategoryList\CategoryList.View.fs" />
+        <Compile Include="Pages\EditRule\EditRule.Types.fs" />
+        <Compile Include="Pages\EditRule\EditRule.App.fs" />
+        <Compile Include="Pages\EditRule\EditRule.View.fs" />
+        <Compile Include="Pages\EditCategory\EditCategory.Types.fs" />
+        <Compile Include="Pages\EditCategory\EditCategory.App.fs" />
+        <Compile Include="Pages\EditCategory\EditRule.View.fs" />
         <Compile Include="Main.Types.fs" />
         <Compile Include="Main.Logic.fs" />
         <Compile Include="Main.App.fs" />
